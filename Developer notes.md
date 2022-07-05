@@ -1,0 +1,6 @@
+- Create policy to skip default network creation.
+  - [Convert/rewrite infrastructure def as yaml.](https://aws.plainenglish.io/terraform-yaml-%EF%B8%8F-3550a3642dd3)
+  - [Create a folder for the policies.](https://registry.terraform.io/modules/terraform-google-modules/folders/google/3.1.0)
+  - [Create 'skip default network' policy using 'org-policy'](https://registry.terraform.io/modules/terraform-google-modules/org-policy/google/5.1.0) (originally: [google_organization_policy](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_organization_policy)).
+  - [Create/use a GCP project.](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_project)
+- [Generate docs.](https://terraform-docs.io/reference/markdown/)
