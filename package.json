@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/Liquid-Labs/minecraft/issues"
   },
-  "homepage": "https://github.com/Liquid-Labs/minecraft#readme"
+  "homepage": "https://github.com/Liquid-Labs/minecraft#readme",
+  "liq": {
+    "orgBase": "git@github.com:Liquid-Labs/Liquid-Labs.git"
+  }
 }
