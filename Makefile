@@ -65,8 +65,7 @@ $(STAGED_MAIN): $(MAIN_SRC) set-bucket-name-var
 	@test -d "$(dir $@)" || mkdir -p "$(dir $@)"
 	sed -E 's/~~.+~~/$(BUCKET_NAME)/' "$<" > "$@"
 
-# the JSON files (usable by Terraform) depend on the YAML files
-$(MAIN_FILE): $(STAGED_MAIN)
+$(MAIN_FILE): $(STAGED_MAIN) # the base yaml files contain bits to be replaced, so we create a staged file
 	@test -d "$(dir $@)" || mkdir -p "$(dir $@)"
 	cat "$<" | $(YQ) > "$@"
 
