@@ -1,6 +1,6 @@
 .DELETE_ON_ERROR:
 	
-.PHONY: all build clean default dependency-graph set-bucket-var test-gcloud-connection test-var-file-exists
+.PHONY: all build clean default dependency-graph deploy set-bucket-var test-gcloud-connection test-var-file-exists
  # suppress implict rules
 MAKEFLAGS += --no-builtin-rules
 MAKEFLAGS += --no-builtin-variables
@@ -35,6 +35,7 @@ all: build
 clean:
 	rm -rf $(BUILD_DIR)
 
+# Build rules
 test-gcloud-connection:
 	@test -n "$(GCLOUD_ACCOUNT)" \
 		|| { \
@@ -70,10 +71,24 @@ $(MAIN_FILE): $(STAGED_MAIN) # the base yaml files contain bits to be replaced, 
 	cat "$<" | $(YQ) > "$@"
 
 $(INIT_LOCK): $(MAIN_FILE)
-	cd $(BUILD_DIR) && $(TERRAFORM) init -var-file="liquid-minecraft.tfvars"
+	cd $(BUILD_DIR) && $(TERRAFORM) init
+
+# Deploy rules
+deploy: build
+	cd $(BUILD_DIR) && $(TERRAFORM) apply -var-file="../liquid-minecraft.tfvars.json" -auto-approve
+
+plan: build
+	cd $(BUILD_DIR) && $(TERRAFORM) plan -var-file="../liquid-minecraft.tfvars.json"
 
 # Utility rules
 dependency-graph: dependencies.png
+	open dependencies.png
 
 dependencies.png:
 	make -Bnd | make2graph | dot -Tpng -o "$@"
+
+deploy-graph: deploy.png
+	open deploy.png
+
+deploy.png:
+	cd $(BUILD_DIR) && $(TERRAFORM) graph | dot -Tpng -o "../$@"

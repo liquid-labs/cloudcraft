@@ -1,13 +1,37 @@
 variable:
+  billing_account:
+    description: ID of the billing account to use for the project.
+    type: string
+    nullable: false
   bucket:
     description: The terraform state bucket.
     type: string
     nullable: false
+  vm_managers:
+    description: Name of group with permisions to activate and deactivate the server.
+    type: string
   credentials_file:
     description: Path to the credentials file.
     type: string
     nullable: false
-  project:
+  image:
+    description: Reference to base image.
+    type: string
+    nullable: false
+  machine_type:
+    description: The instance type to use for the minecraft server.
+    type: string
+    nullable: false
+  network_name:
+    description: The name of the network the server resides in.
+    type: string
+    default: default
+    # default: minecraft-network
+    nullable: false
+  org_id:
+    description: The name of hosting organization's ID.
+    nullable: false
+  project_id:
     description: The Google Cloud project ID.
     type: string
     nullable: false
@@ -15,6 +39,10 @@ variable:
     description: The region where to build the project.
     type: string
     default: us-central1
+    nullable: false
+  server_name:
+    description: Name of the minecraft server.
+    default: minecraft-server
     nullable: false
   zone:
     description: The zone where to build the project.
@@ -31,39 +59,144 @@ terraform:
     google:
       source: hashicorp/google
       version: '>= 4.27.0'
-      
+
 provider:
   google:
     project: ${var.project_id}
     region: ${var.region}
     zone: ${var.zone}
-    
-module:
-  org-policy:
-    source: terraform-google-modules/org-policy/google
-    version: = 5.1.0
-    organization_id: = ${var.org_id}
-    constraint: constraints/serviceuser.services
-  project-config-folder:
-    source: terraform-google-modules/folders/google//examples/simple_example
-    version: 3.1.0
-    parent: = organization${var.org_id}
-    names:
-      - policies
-  org-policy_skip_default_network:
-    source: terraform-google-modules/org-policy/google//modules/skip_default_network
-    version: = 5.1.0
-    organization_id: = ${var.org_id}
-    project_id: ${var.project_id}
-    folder_id: module.project_config_folder.folder_id
-    policy_for: organization
-    
+
 resource:
+  # Create a project where the resources live
   google_project:
-    minecraft_project:
-      name: ${var.project}
+    liquid-labs-minecraft:
+      name: ${var.project_id}
       project_id: ${var.project_id}
       org_id: ${var.org_id}
+      billing_account: ${var.billing_account}
+  
+  # Enable services.
+  google_project_service:
+    compute_api:
+      project: ${var.project_id}
+      service: compute.googleapis.com
+      
+  # Create service account to run service with no permissions
+  google_service_account:
+    minecraft_service_acct:
+      account_id: ll-minecraft-service-acct
+      display_name: minecraft_runner
+      
+  # Permenant Minecraft disk, stays around when VM is off
+  google_compute_disk:
+    minecraft_disk:
+      name: minecraft-disk
+      type: pd-standard
+      zone: ${var.zone}
+      image: ${var.image}
+      lifecycle:
+        prevent_destroy: true
+    
+  # Permenant IP address, stays around when VM is off
+  google_compute_address:
+    minecraft_ip:
+      name: minecraft-ip
+      region: ${var.region}
+  
+  google_compute_router:
+    minecraft_router:
+      project: ${var.project_id}
+      name: minecraft-nat-router
+      network: default
+      region: ${var.region}
+  
+  # Create a private network so the minecraft instance cannot access any other resources.
+  # google_compute_network:
+  #  minecraft_network:
+  #    name: ${var.network_name}
+  
+  # VM to run Minecraft, we use preemptable which will shutdown within 24 hours
+  google_compute_instance:
+    minecraft_server:
+      description:
+      name: ${var.server_name}
+      machine_type: ${var.machine_type}
+      zone: ${var.zone}
+      tags: ["minecraft"]
+      # Run itzg/minecraft-server docker image on startup
+      # The instructions of https://hub.docker.com/r/itzg/minecraft-server/ are applicable
+      # For instance, Ssh into the instance and you can run
+      #  docker logs mc
+      #  docker exec -i mc rcon-cli
+      # Once in rcon-cli you can "op <player_id>" to make someone an operator (admin)
+      # Use 'sudo journalctl -u google-startup-scripts.service' to retrieve the startup script output
+      metadata_startup_script: docker run -d -p 25565:25565 -e EULA=TRUE -e VERSION=1.12.2 -v /var/minecraft:/data --name mc -e TYPE=FORGE -e FORGEVERSION=14.23.0.2552 -e MEMORY=2G --rm=true itzg/minecraft-server:latest;
+      metadata:
+        enable-oslogin: true
+      boot_disk:
+        auto_delete: false
+        source: minecraft-disk # google_compute_disk.minecraft_disk.self_link
+      network_interface:
+        network: default
+        access_config:
+          nat_ip: "${google_compute_address.minecraft_ip.address}"
+      service_account:
+        email: ll-minecraft-service-acct@liquid-labs-minecraft.iam.gserviceaccount.com # google_service_account.minecraft_service_acct.email
+        scopes: ["userinfo-email"]
+      scheduling:
+        preemptible: true # Closes within 24 hours (sometimes sooner)
+        automatic_restart: false
+        provisioning_model: SPOT
+        instance_termination_action: STOP
+  
+  google_compute_firewall:
+    minecraft_firewall:
+      name: minecraft-firewall
+      network: ${var.network_name}
+      # SSH and Minecraft client port
+      allow:
+        - protocol: tcp
+          ports: ["22", "25565"]
+      # ICMP (ping)
+        - protocol: icmp
+      source_ranges: ["0.0.0.0/0"]
+      target_tags: ["minecraft"]
+
+  google_project_iam_custom_role:
+    minecraft_switcher:
+      role_id: minecraft_switcher
+      title: Minecraft Switcher
+      description: Can turn a VM on and off
+      permissions:
+        - compute.instances.start
+        - compute.instances.stop
+        - compute.instances.get
+    instance_lister:
+      description: Can list VMs in project
+      role_id: minecraft_instances_lister
+      title: Instance Lister
+      permissions:
+        - compute.instances.list
+  
+  google_compute_instance_iam_binding:
+    switcher:
+      project: ${var.project_id}
+      zone: ${var.zone}
+      instance_name: "${google_compute_instance.minecraft_server.name}"
+      role: "${google_project_iam_custom_role.minecraft_switcher.id}"
+      members:
+        - "user:zane@liquid-labs.com"
+  
+  google_project_iam_member:
+    projectBrowsers:
+      project: ${var.project_id}
+      role: roles/browser
+      member: group:${var.vm_managers}
+    computeViewer:
+      project: ${var.project_id}
+      role: "${google_project_iam_custom_role.instance_lister.id}" # roles/minecraft_instances_lister
+      member: "group:${var.vm_managers}"
+# end resources
       
 output:
   final_proj_id:
