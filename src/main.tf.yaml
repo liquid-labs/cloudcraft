@@ -25,8 +25,7 @@ variable:
   network_name:
     description: The name of the network the server resides in.
     type: string
-    default: default
-    # default: minecraft-network
+    default: minecraft-network
     nullable: false
   org_id:
     description: The name of hosting organization's ID.
@@ -44,12 +43,21 @@ variable:
     description: Name of the minecraft server.
     default: minecraft-server
     nullable: false
+  server_type:
+    description: Takes 'java' or 'bedrock'.
+    default: bedrock
+    nullable: false
   zone:
     description: The zone where to build the project.
     type: string
     default: us-central1-c
     nullable: false
-    
+
+locals:
+  docker_image: '${var.server_type == "bedrock" ? "itzg/minecraft-bedrock-server" : "itzg/minecraft-server"}'
+  ext_port: '${var.server_type == "bedrock" ? 19132 : 25565}'
+  server_protocol: '${var.server_type == "bedrock" ? "udp" : "tcp"}'
+
 terraform:
   backend:
     gcs: # this will safe the statefile in the GC bucket
@@ -74,6 +82,7 @@ resource:
       project_id: ${var.project_id}
       org_id: ${var.org_id}
       billing_account: ${var.billing_account}
+      auto_create_network: false
   
   # Enable services.
   google_project_service:
@@ -94,6 +103,7 @@ resource:
       type: pd-standard
       zone: ${var.zone}
       image: ${var.image}
+      size: 20
       lifecycle:
         prevent_destroy: true
     
@@ -103,17 +113,18 @@ resource:
       name: minecraft-ip
       region: ${var.region}
   
-  google_compute_router:
-    minecraft_router:
-      project: ${var.project_id}
-      name: minecraft-nat-router
-      network: default
-      region: ${var.region}
-  
   # Create a private network so the minecraft instance cannot access any other resources.
-  # google_compute_network:
-  #  minecraft_network:
-  #    name: ${var.network_name}
+  google_compute_network:
+    minecraft_network:
+      name: ${var.network_name}
+      auto_create_subnetworks: false
+  
+  google_compute_subnetwork:
+    minecraft_subnet:
+      name: minecraft-subnet
+      ip_cidr_range: 10.2.0.0/16
+      region: ${var.region}
+      network: "${google_compute_network.minecraft_network.id}"
   
   # VM to run Minecraft, we use preemptable which will shutdown within 24 hours
   google_compute_instance:
@@ -122,7 +133,8 @@ resource:
       name: ${var.server_name}
       machine_type: ${var.machine_type}
       zone: ${var.zone}
-      tags: ["minecraft"]
+      tags: ["minecraft", "ssh"]
+      allow_stopping_for_update: true
       # Run itzg/minecraft-server docker image on startup
       # The instructions of https://hub.docker.com/r/itzg/minecraft-server/ are applicable
       # For instance, Ssh into the instance and you can run
@@ -130,16 +142,19 @@ resource:
       #  docker exec -i mc rcon-cli
       # Once in rcon-cli you can "op <player_id>" to make someone an operator (admin)
       # Use 'sudo journalctl -u google-startup-scripts.service' to retrieve the startup script output
-      metadata_startup_script: docker run -d -p 25565:25565 -e EULA=TRUE -e VERSION=1.12.2 -v /var/minecraft:/data --name mc -e TYPE=FORGE -e FORGEVERSION=14.23.0.2552 -e MEMORY=2G --rm=true itzg/minecraft-server:latest;
+      metadata_startup_script: "docker run -d -p ${local.ext_port}:${local.ext_port}/${local.server_protocol} -e EULA=TRUE -e VERSION=1.12.2 -v /var/minecraft:/data --name mc -e TYPE=FORGE -e FORGEVERSION=14.23.0.2552 -e MEMORY=3G --rm=true ${local.docker_image}:latest;"
       metadata:
         enable-oslogin: true
       boot_disk:
         auto_delete: false
         source: minecraft-disk # google_compute_disk.minecraft_disk.self_link
       network_interface:
-        network: default
+        network: "${google_compute_network.minecraft_network.id}"
+        subnetwork: "${google_compute_subnetwork.minecraft_subnet.id}"
+        network_ip: 10.2.0.100
         access_config:
           nat_ip: "${google_compute_address.minecraft_ip.address}"
+      can_ip_forward: true
       service_account:
         email: ll-minecraft-service-acct@liquid-labs-minecraft.iam.gserviceaccount.com # google_service_account.minecraft_service_acct.email
         scopes: ["userinfo-email"]
@@ -150,18 +165,37 @@ resource:
         instance_termination_action: STOP
   
   google_compute_firewall:
-    minecraft_firewall:
-      name: minecraft-firewall
+    ssh:
+      name: ssh
       network: ${var.network_name}
-      # SSH and Minecraft client port
       allow:
         - protocol: tcp
-          ports: ["22", "25565"]
-      # ICMP (ping)
-        - protocol: icmp
+          ports: ["22", "${local.ext_port}"]
+      direction: INGRESS
+      priority: 1000
+      source_ranges: ["0.0.0.0/0"]
+      target_tags: ["ssh"]
+    ping:
+      name: ping
+      network: ${var.network_name}
+      allow:
+        - protocol: icmp # ping
+      direction: INGRESS
+      priority: 1000
+      source_ranges: ["0.0.0.0/0"]
+    minecraft_service:
+      name: minecraft-service
+      network: ${var.network_name}
+      allow:
+        - protocol: tcp
+          ports: ["${local.ext_port}"]
+        - protocol: udp
+          ports: ["${local.ext_port}"]
+      direction: INGRESS
+      priority: 1000
       source_ranges: ["0.0.0.0/0"]
       target_tags: ["minecraft"]
-
+  
   google_project_iam_custom_role:
     minecraft_switcher:
       role_id: minecraft_switcher
@@ -185,7 +219,7 @@ resource:
       instance_name: "${google_compute_instance.minecraft_server.name}"
       role: "${google_project_iam_custom_role.minecraft_switcher.id}"
       members:
-        - "user:zane@liquid-labs.com"
+        - "group:${var.vm_managers}"
   
   google_project_iam_member:
     projectBrowsers:
