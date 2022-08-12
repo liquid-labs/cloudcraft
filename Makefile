@@ -18,13 +18,14 @@ GCLOUD_CONNECTION_TEST:=gcloud projects list --account $(GCLOUD_ACCOUNT)
 VAR_FILE:=liquid-minecraft.tfvars.json
 
 SRC_DIR:=./src
+TFORM_SRC:=$(SRC_DIR)/terraform
 BUILD_DIR:=./build
 STAGING_DIR:=$(BUILD_DIR)/staging
 INIT_LOCK:=$(BUILD_DIR)/.terraform.lock.hcl
 
-MAIN_SRC:=$(SRC_DIR)/main.tf.yaml
-STAGED_MAIN:=$(STAGING_DIR)/main.tf.yaml
-MAIN_FILE:=$(BUILD_DIR)/main.tf.json
+TFORM_MAIN_SRC:=$(TFORM_SRC)/main.tf.yaml
+TFORM_MAIN_STAGED:=$(STAGING_DIR)/main.tf.yaml
+TFORM_MAIN_FILE:=$(BUILD_DIR)/main.tf.json
 
 BUILD_TARGETS:=$(INIT_LOCK)
 
@@ -62,15 +63,15 @@ set-bucket-name-var: test-var-file-exists
 	}
 	$(eval BUCKET_NAME:=$(EXTRACT_BUCKET_VALUE_CMD))
 
-$(STAGED_MAIN): $(MAIN_SRC) set-bucket-name-var
+$(TFORM_MAIN_STAGED): $(TFORM_MAIN_SRC) set-bucket-name-var
 	@test -d "$(dir $@)" || mkdir -p "$(dir $@)"
 	sed -E 's/~~.+~~/$(BUCKET_NAME)/' "$<" > "$@"
 
-$(MAIN_FILE): $(STAGED_MAIN) # the base yaml files contain bits to be replaced, so we create a staged file
+$(TFORM_MAIN_FILE): $(TFORM_MAIN_STAGED) # the base yaml files contain bits to be replaced, so we create a staged file
 	@test -d "$(dir $@)" || mkdir -p "$(dir $@)"
 	cat "$<" | $(YQ) > "$@"
 
-$(INIT_LOCK): $(MAIN_FILE)
+$(INIT_LOCK): $(TFORM_MAIN_FILE)
 	cd $(BUILD_DIR) && $(TERRAFORM) init
 
 # Deploy rules
