@@ -233,5 +233,6 @@ resource:
 # end resources
       
 output:
-  final_proj_id:
-    value: google_project
+  project_id:
+    value: ${var.project_id}
+    description: Outputs the 'final' project ID. If the original project ID provided at creation was too short or there was a name collision, then the ID may be updated during the project creation process so this output value should always be used in all subsequent actions.
