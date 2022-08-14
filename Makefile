@@ -1,6 +1,6 @@
 .DELETE_ON_ERROR:
 	
-.PHONY: all build clean default dependency-graph deploy set-bucket-var test-gcloud-connection test-var-file-exists
+.PHONY: all build clean default dependency-graph tform-build tform-deploy set-bucket-var test-gcloud-connection test-var-file-exists
  # suppress implict rules
 MAKEFLAGS += --no-builtin-rules
 MAKEFLAGS += --no-builtin-variables
@@ -18,25 +18,28 @@ GCLOUD_CONNECTION_TEST:=gcloud projects list --account $(GCLOUD_ACCOUNT)
 VAR_FILE:=liquid-minecraft.tfvars.json
 
 SRC_DIR:=./src
-TFORM_SRC:=$(SRC_DIR)/terraform
 BUILD_DIR:=./build
 STAGING_DIR:=$(BUILD_DIR)/staging
-INIT_LOCK:=$(BUILD_DIR)/.terraform.lock.hcl
 
+TFORM_SRC:=$(SRC_DIR)/terraform
 TFORM_MAIN_SRC:=$(TFORM_SRC)/main.tf.yaml
 TFORM_MAIN_STAGED:=$(STAGING_DIR)/main.tf.yaml
 TFORM_MAIN_FILE:=$(BUILD_DIR)/main.tf.json
+TFORM_INIT_LOCK:=$(BUILD_DIR)/.terraform.lock.hcl
 
-BUILD_TARGETS:=$(INIT_LOCK)
+build: tform-build
 
-build: test-gcloud-connection $(BUILD_TARGETS)
+deploy: tform-deploy
 
 all: build
 
 clean:
 	rm -rf $(BUILD_DIR)
 
-# Build rules
+# Terraform rules
+## Terraform build rules
+tform-build: test-gcloud-connection $(TFORM_INIT_LOCK)
+
 test-gcloud-connection:
 	@test -n "$(GCLOUD_ACCOUNT)" \
 		|| { \
@@ -71,17 +74,17 @@ $(TFORM_MAIN_FILE): $(TFORM_MAIN_STAGED) # the base yaml files contain bits to b
 	@test -d "$(dir $@)" || mkdir -p "$(dir $@)"
 	cat "$<" | $(YQ) > "$@"
 
-$(INIT_LOCK): $(TFORM_MAIN_FILE)
+$(TFORM_INIT_LOCK): $(TFORM_MAIN_FILE)
 	cd $(BUILD_DIR) && $(TERRAFORM) init
 
-# Deploy rules
-deploy: build
+# Terraform deploy rules
+tform-deploy: tform-build
 	cd $(BUILD_DIR) && $(TERRAFORM) apply -var-file="../liquid-minecraft.tfvars.json" -auto-approve
 
 plan: build
 	cd $(BUILD_DIR) && $(TERRAFORM) plan -var-file="../liquid-minecraft.tfvars.json"
 
-# Utility rules
+# Terraform utility rules
 dependency-graph: dependencies.png
 	open dependencies.png
 
