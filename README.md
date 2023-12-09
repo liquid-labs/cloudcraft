@@ -1,9 +1,28 @@
-# Minecraft Cloud Server
+# CloudCraft: Minecraft Cloud Server
 __by Liquid Labs__
 
 A robust Google Cloud minecraft server.
 
+## Install
+
+1. [Install terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli) if not installed (check with `terraform --version`).
+2. [Install gcloud CLI](https://cloud.google.com/sdk/docs/install) if not installed (check with `gcloud --version`).
+3. Install CloudCraft:
+   ```bash
+   npm i -g cloudcraft
+   ```
+
 ## Usage
+
+1. Authenticate to gcloud:
+   ```bash
+   gcloud auth application-default login
+   ```
+2. Create and start a server:
+   ```bash
+   cloudcraft server create -- name='smith-Family' start
+   ```
+3. 
 
 _*Untested*_
 ```bash

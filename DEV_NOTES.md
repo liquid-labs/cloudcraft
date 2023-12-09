@@ -1,0 +1,1 @@
+- We were unable to see projects with no organization, even though we had two in our account (though we got inconsistent results in the GCP Cloud Console as well, with sometimes two, sometimes one, and sometimes none being listed). So, we're going to implement requiring an organization, though in theory it might be unecessary.

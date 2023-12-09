@@ -10,10 +10,6 @@ variable:
   vm_managers:
     description: Name of group with permisions to activate and deactivate the server.
     type: string
-  credentials_file:
-    description: Path to the credentials file.
-    type: string
-    nullable: false
   host_image:
     description: Reference to base image.
     type: string
@@ -63,9 +59,9 @@ locals:
 
 terraform:
   backend:
-    gcs: # this will safe the statefile in the GC bucket
+    gcs: # this will save the statefile in the GC bucket
       prefix: minecraft/state
-      bucket: ~~ var.bucket ~~ # this is replaced by the value from 'liquid-minecraft.tfvars.json'
+      bucket: ${var.bucket}
   required_providers:
     google:
       source: hashicorp/google
@@ -80,11 +76,11 @@ provider:
 resource:
   # Create a project where the resources live
   google_project:
-    liquid-labs-minecraft:
+    minecraft-project:
       name: ${var.project_id}
       project_id: ${var.project_id}
       org_id: ${var.org_id}
-      billing_account: ${var.billing_account}
+      # billing_account: ${var.billing_account}
       auto_create_network: false
   
   # Enable services.
@@ -96,7 +92,7 @@ resource:
   # Create service account to run service with no permissions
   google_service_account:
     minecraft_service_acct:
-      account_id: ll-minecraft-service-acct
+      account_id: minecraft-service-acct
       display_name: minecraft_runner
       
   # Permenant Minecraft disk, stays around when VM is off
@@ -129,7 +125,7 @@ resource:
       region: ${var.region}
       network: "${google_compute_network.minecraft_network.id}"
   
-  # VM to run Minecraft, we use preemptable which will shutdown within 24 hours
+  # VM to run Minecraft, we use preemptible which will shutdown within 24 hours
   google_compute_instance:
     cloudcraft_host:
       description: Hosts the cloudcraft server container.
@@ -187,7 +183,7 @@ resource:
           nat_ip: "${google_compute_address.minecraft_ip.address}"
       can_ip_forward: true
       service_account:
-        email: ll-minecraft-service-acct@liquid-labs-minecraft.iam.gserviceaccount.com # google_service_account.minecraft_service_acct.email
+        email: minecraft-service-acct@${var.project_id}.iam.gserviceaccount.com # google_service_account.minecraft_service_acct.email
         scopes: ["userinfo-email"]
       scheduling:
         preemptible: true # Closes within 24 hours (sometimes sooner)
@@ -201,7 +197,7 @@ resource:
       network: ${var.network_name}
       allow:
         - protocol: tcp
-          ports: ["22", "${local.ext_port}"]
+          ports: ["22", "${local.ext_port}"] # TODO: why is local.ext_port listed here?
       direction: INGRESS
       priority: 1000
       source_ranges: ["0.0.0.0/0"]
