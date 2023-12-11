@@ -3,21 +3,24 @@ import { Questioner } from '@liquid-labs/question-and-answer'
 
 import { CREATE_LABEL } from './constants'
 
-const selectProject = async ({ config, organizationName }) => {
+const selectProject = async({ config, organizationName, requireDisplayName = false }) => {
   const projectsClient = new ProjectsClient()
 
-  let { projectName } = config
+  let { projectName, projectId } = config
 
-  if (projectName !== undefined) {
-    const [project] = await projectsClient.getProject({ name: projectName })
-    console.log('project:', project) // DEBUG
+  if (projectName !== undefined && projectId !== undefined) {
+    let projectDisplayName
+    if (requireDisplayName === true) {
+      const [project] = await projectsClient.getProject({ name : projectName })
+      projectDisplayName = project.displayName
+    }
 
-    return { projectDisplayName: project.displayName, projectId: project.projectId, projectName }
+    return { projectDisplayName, projectId, projectName }
   }
 
-  const projects = organizationName === undefined 
-    ? projectsClient.searchProjectsAsync() 
-    : projectsClient.listProjectsAsync({ parent: organizationName })
+  const projects = organizationName === undefined
+    ? projectsClient.searchProjectsAsync()
+    : projectsClient.listProjectsAsync({ parent : organizationName })
   const projectOptions = []
   const projectData = []
 
@@ -41,14 +44,30 @@ const selectProject = async ({ config, organizationName }) => {
   const projectDisplayName = projectQuestioner.get('PROJ_DISPLAY_NAME')
 
   if (projectDisplayName === CREATE_LABEL) {
-    throw new Error('Project create not implemented.')
+    const createIB = {
+      actions : [
+        { 
+          prompt : "What should the new project be called? (use lowercase alphanumeric + '-')", 
+          requireMatch: '^[a-z0-9-]+$',
+          parameter : 'PROJ_ID' 
+        }
+      ]
+    }
+
+    const createQuestioner = new Questioner({ interrogationBundle : createIB })
+    await createQuestioner.question()
+    const projectId = createQuestioner.get('PROJ_ID')
+    // TODO: chechk that the project is available and loop on question if not
+
+    return { projectId }
   }
   else {
     const project = projectData.find(({ displayName }) => displayName === projectDisplayName)
     projectName = project.name
-    const projectId = project.projectId
+    projectId = project.projectId
 
     config.projectName = projectName
+    config.projectId = projectId
 
     return { projectDisplayName, projectId, projectName }
   }

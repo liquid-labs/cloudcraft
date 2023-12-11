@@ -3,15 +3,19 @@ import { OrganizationsClient } from '@google-cloud/resource-manager'
 
 import { CREATE_LABEL, NONE_LABEL } from './constants'
 
-const selectOrg = async({ allowNone = false, config }) => {
+const selectOrg = async({ allowNone = false, config, requireDisplayName = false }) => {
   const orgClient = new OrganizationsClient()
 
   let { organizationName } = config
 
+  let organizationDisplayName
   if (organizationName !== undefined) {
-    const [organization] = await orgClient.getOrganization({ name: organizationName })
+    if (requireDisplayName === true) {
+      const [organization] = await orgClient.getOrganization({ name : organizationName })
+      organizationDisplayName = organization.displayName
+    }
 
-    return { organizationDisplayName: organization.displayName, organizationName }
+    return { organizationDisplayName, organizationName }
   }
   // else, we select the org
   const organizations = await orgClient.searchOrganizationsAsync()
@@ -36,7 +40,7 @@ const selectOrg = async({ allowNone = false, config }) => {
   const orgQuestioner = new Questioner({ interrogationBundle : organizationIB })
   await orgQuestioner.question()
 
-  const organizationDisplayName = orgQuestioner.get('ORG_NAME')
+  organizationDisplayName = orgQuestioner.get('ORG_NAME')
   if (organizationDisplayName === NONE_LABEL) {
     delete config.organizationName
 

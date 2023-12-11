@@ -21,9 +21,11 @@
     "orgBase": "git@github.com:Liquid-Labs/Liquid-Labs.git"
   },
   "dependencies": {
+    "@google-cloud/billing": "^4.0.2",
     "@google-cloud/resource-manager": "^5.0.1",
     "@google-cloud/storage": "^7.7.0",
     "@liquid-labs/question-and-answer": "^1.0.0-alpha.15",
+    "@liquid-labs/shell-toolkit": "^1.0.0-alpha.8",
     "js-yaml": "^4.1.0"
   },
   "devDependencies": {

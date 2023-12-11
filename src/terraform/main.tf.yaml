@@ -1,34 +1,39 @@
 variable:
-  billing_account:
+  billing_account_id:
     description: ID of the billing account to use for the project.
-    type: string
-    nullable: false
-  bucket:
-    description: The terraform state bucket.
     type: string
     nullable: false
   vm_managers:
     description: Name of group with permisions to activate and deactivate the server.
     type: string
+    default: cloudcraft-users
   host_image:
     description: Reference to base image.
     type: string
+    # TODO: use google_compute_image data source to dynamically pull the latest
+    default: projects/cos-cloud/global/images/cos-109-17800-66-32
+    nullable: false
+  compute_disk_size:
+    description: The size of the base host disk in GB.
+    type: number
+    default: 10 # this is the size of the cos-109-lts image
     nullable: false
   machine_type:
-    description: The instance type to use for the minecraft server.
+    description: The instance type to use for the cloudcraft server.
     type: string
+    default: n1-standard-1 # has 7.5G memory
     nullable: false
+  cloudcraft_server_memory:
+    description: The amount of memory to dedicate to the Docker-based Minecraft server.
+    type: string
+    default: 6.5G # leaves 1G in default setup
   network_name:
     description: The name of the network the server resides in.
     type: string
-    default: minecraft-network
+    default: cloudcraft-network
     nullable: false
   org_id:
     description: The name of hosting organization's ID.
-    nullable: false
-  project_id:
-    description: The Google Cloud project ID.
-    type: string
     nullable: false
   region:
     description: The region where to build the project.
@@ -36,8 +41,8 @@ variable:
     default: us-central1
     nullable: false
   host_name:
-    description: Name of cloudcraft's minecraft server.
-    default: cloudcraft-host
+    description: Name of host running the Docker-based Minecraft server.
+    default: cloudcraft-docker-host
     nullable: false
   server_type:
     description: Takes 'java' or 'bedrock'.
@@ -59,9 +64,8 @@ locals:
 
 terraform:
   backend:
-    gcs: # this will save the statefile in the GC bucket
-      prefix: minecraft/state
-      bucket: ${var.bucket}
+    local:
+      path: terraform.tfstate
   required_providers:
     google:
       source: hashicorp/google
@@ -69,31 +73,40 @@ terraform:
 
 provider:
   google:
-    project: ${var.project_id}
+    # project: ${random_id.project_id.hex}
     region: ${var.region}
     zone: ${var.zone}
 
 resource:
+  random_id:
+    project_id:
+      byte_length: 8
+      prefix: cloudcraft-
+
+
   # Create a project where the resources live
   google_project:
-    minecraft-project:
-      name: ${var.project_id}
-      project_id: ${var.project_id}
+    cloudcraft-project:
+      name: ${random_id.project_id.hex}
+      project_id: ${random_id.project_id.hex}
       org_id: ${var.org_id}
-      # billing_account: ${var.billing_account}
+      billing_account: ${var.billing_account_id} # billing is required to enable the googleapis
       auto_create_network: false
   
   # Enable services.
   google_project_service:
     compute_api:
-      project: ${var.project_id}
+      project: ${random_id.project_id.hex}
       service: compute.googleapis.com
+      depends_on: [google_project.cloudcraft-project]
       
   # Create service account to run service with no permissions
   google_service_account:
-    minecraft_service_acct:
-      account_id: minecraft-service-acct
-      display_name: minecraft_runner
+    cloudcraft_service_acct:
+      account_id: cloudcraft-service-acct
+      display_name: cloudcraft_runner
+      project: ${random_id.project_id.hex}
+      depends_on: [google_project.cloudcraft-project]
       
   # Permenant Minecraft disk, stays around when VM is off
   google_compute_disk:
@@ -102,28 +115,34 @@ resource:
       type: pd-standard
       zone: ${var.zone}
       image: ${var.host_image}
-      size: 20
+      size: ${var.compute_disk_size}
       lifecycle:
-        prevent_destroy: false #true
+        prevent_destroy: true
+      project: ${random_id.project_id.hex}
+      depends_on: [google_project.cloudcraft-project]
     
   # Permenant IP address, stays around when VM is off
   google_compute_address:
-    minecraft_ip:
-      name: minecraft-ip
-      region: ${var.region}
-  
-  # Create a private network so the minecraft instance cannot access any other resources.
+    cloudcraft_ip:
+      name: cloudcraft-ip
+      project: ${random_id.project_id.hex}
+      depends_on: [google_project.cloudcraft-project]
+
+  # Create a private network so the cloudcraft instance cannot access any other resources.
   google_compute_network:
-    minecraft_network:
+    cloudcraft_network:
       name: ${var.network_name}
       auto_create_subnetworks: false
+      project: ${random_id.project_id.hex}
+      depends_on: [google_project.cloudcraft-project]
   
   google_compute_subnetwork:
-    minecraft_subnet:
-      name: minecraft-subnet
+    cloudcraft_subnet:
+      name: cloudcraft-subnet
       ip_cidr_range: 10.2.0.0/16
       region: ${var.region}
-      network: "${google_compute_network.minecraft_network.id}"
+      network: "${google_compute_network.cloudcraft_network.id}"
+      project: ${random_id.project_id.hex}
   
   # VM to run Minecraft, we use preemptible which will shutdown within 24 hours
   google_compute_instance:
@@ -131,8 +150,7 @@ resource:
       description: Hosts the cloudcraft server container.
       name: ${var.host_name}
       machine_type: ${var.machine_type}
-      zone: ${var.zone}
-      tags: ["minecraft", "ssh"]
+      tags: ["cloudcraft", "ssh"]
       allow_stopping_for_update: true
       metadata_startup_script: |
         {
@@ -162,7 +180,7 @@ resource:
           -e VERSION=LATEST \
           -v ${local.host_bind_dir.value}:/data \
           --name mc \
-          -e MEMORY=4G \
+          -e MEMORY=${var.cloudcraft_server_memory} \
           ${local.server_image}:latest >> /var/log/mc-docker-run.log 2>&1'
         Restart=always
         
@@ -176,20 +194,21 @@ resource:
         auto_delete: false
         source: "${google_compute_disk.cloudcraft_disk.self_link}"
       network_interface:
-        network: "${google_compute_network.minecraft_network.id}"
-        subnetwork: "${google_compute_subnetwork.minecraft_subnet.id}"
+        network: "${google_compute_network.cloudcraft_network.id}"
+        subnetwork: "${google_compute_subnetwork.cloudcraft_subnet.id}"
         network_ip: 10.2.0.100
         access_config:
-          nat_ip: "${google_compute_address.minecraft_ip.address}"
+          nat_ip: "${google_compute_address.cloudcraft_ip.address}"
       can_ip_forward: true
       service_account:
-        email: minecraft-service-acct@${var.project_id}.iam.gserviceaccount.com # google_service_account.minecraft_service_acct.email
+        email: cloudcraft-service-acct@${random_id.project_id.hex}.iam.gserviceaccount.com # google_service_account.cloudcraft_service_acct.email
         scopes: ["userinfo-email"]
       scheduling:
         preemptible: true # Closes within 24 hours (sometimes sooner)
         automatic_restart: false
         provisioning_model: SPOT
         instance_termination_action: STOP
+      project: ${random_id.project_id.hex}
   
   google_compute_firewall:
     ssh:
@@ -202,6 +221,8 @@ resource:
       priority: 1000
       source_ranges: ["0.0.0.0/0"]
       target_tags: ["ssh"]
+      project: ${random_id.project_id.hex}
+      depends_on: [google_project.cloudcraft-project,google_compute_network.cloudcraft_network]
     ping:
       name: ping
       network: ${var.network_name}
@@ -210,8 +231,10 @@ resource:
       direction: INGRESS
       priority: 1000
       source_ranges: ["0.0.0.0/0"]
-    minecraft_service:
-      name: minecraft-service
+      project: ${random_id.project_id.hex}
+      depends_on: [google_project.cloudcraft-project,google_compute_network.cloudcraft_network]
+    cloudcraft_service:
+      name: cloudcraft-service
       network: ${var.network_name}
       allow:
         - protocol: tcp
@@ -221,45 +244,54 @@ resource:
       direction: INGRESS
       priority: 1000
       source_ranges: ["0.0.0.0/0"]
-      target_tags: ["minecraft"]
+      target_tags: ["cloudcraft"]
+      project: ${random_id.project_id.hex}
+      depends_on: [google_project.cloudcraft-project,google_compute_network.cloudcraft_network]
   
   google_project_iam_custom_role:
-    minecraft_switcher:
-      role_id: minecraft_switcher
+    cloudcraft_switcher:
+      role_id: cloudcraft_switcher
       title: Minecraft Switcher
       description: Can turn a VM on and off
       permissions:
         - compute.instances.start
         - compute.instances.stop
         - compute.instances.get
+      project: ${random_id.project_id.hex}
+      depends_on: [google_project.cloudcraft-project]
     instance_lister:
       description: Can list VMs in project
-      role_id: minecraft_instances_lister
+      role_id: cloudcraft_instances_lister
       title: Instance Lister
       permissions:
         - compute.instances.list
+      project: ${random_id.project_id.hex}
+      depends_on: [google_project.cloudcraft-project]
+
+#  google_compute_instance_iam_binding:
+#    switcher:
+#      project: ${random_id.project_id.hex}
+#      zone: ${var.zone}
+#      instance_name: "${google_compute_instance.cloudcraft_host.name}"
+#      role: "${google_project_iam_custom_role.cloudcraft_switcher.id}"
+#      members:
+#        - "group:${var.vm_managers}"
   
-  google_compute_instance_iam_binding:
-    switcher:
-      project: ${var.project_id}
-      zone: ${var.zone}
-      instance_name: "${google_compute_instance.cloudcraft_host.name}"
-      role: "${google_project_iam_custom_role.minecraft_switcher.id}"
-      members:
-        - "group:${var.vm_managers}"
-  
-  google_project_iam_member:
-    projectBrowsers:
-      project: ${var.project_id}
-      role: roles/browser
-      member: group:${var.vm_managers}
-    computeViewer:
-      project: ${var.project_id}
-      role: "${google_project_iam_custom_role.instance_lister.id}" # roles/minecraft_instances_lister
-      member: "group:${var.vm_managers}"
+#  google_project_iam_member:
+#    projectBrowsers:
+#      project: ${random_id.project_id.hex}
+#      role: roles/browser
+#      member: group:${var.vm_managers}
+#    computeViewer:
+#      project: ${random_id.project_id.hex}
+#      role: "${google_project_iam_custom_role.instance_lister.id}" # roles/cloudcraft_instances_lister
+#      member: "group:${var.vm_managers}"
 # end resources
       
 output:
   project_id:
-    value: ${var.project_id}
-    description: Outputs the 'final' project ID. If the original project ID provided at creation was too short or there was a name collision, then the ID may be updated during the project creation process so this output value should always be used in all subsequent actions.
+    value: ${random_id.project_id.hex}
+    description: The project ID.
+  ip_address:
+    value: ${google_compute_address.cloudcraft_ip.address}
+    description: The IP address of the Minecraft server.

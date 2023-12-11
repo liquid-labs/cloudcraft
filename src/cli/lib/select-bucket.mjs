@@ -3,7 +3,7 @@ import { Questioner } from '@liquid-labs/question-and-answer'
 
 import { CREATE_LABEL } from './constants'
 
-const selectBucket = async ({ config, projectId }) => {
+const selectBucket = async({ config, projectId }) => {
   const storageClient = new Storage({ projectId })
 
   let { bucketName } = config
