@@ -13,7 +13,6 @@ const info = async({ name }) => {
   await stageTerraformFiles()
 
   const jsonContent = (await tryExecAsync(`cd '${BUILD_DIR}' && terraform output -json`)).stdout
-  console.log('jsonContent:', jsonContent) // DEBUG
 
   process.stdout.write(jsonContent + '\n')
 }
