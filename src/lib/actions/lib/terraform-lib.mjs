@@ -1,6 +1,7 @@
 import * as fsPath from 'node:path'
 import * as fs from 'node:fs/promises'
 
+import { find } from 'find-plus'
 import yaml from 'js-yaml'
 
 import { tryExecAsync } from '@liquid-labs/shell-toolkit'
@@ -18,21 +19,27 @@ const deployTerraform = async() => {
   )
 }
 
-const stageTerraformMain = async() => {
-  const buildDirPromise = fs.mkdir(buildDir, { recursive : true })
+const stageTerraformFiles = async() => {
+  const terraformSrcPath = fsPath.join(__dirname, 'terraform')
+  const sourceFiles = await find({ root : terraformSrcPath, tests : [({ name }) => name.endsWith('.yaml')] })
 
-  const cloudcraftTerraformYAMLPath = fsPath.join(__dirname, 'cloudcraft.tf.yaml')
-  const cloudcraftTerraformYAMLContents = await fs.readFile(cloudcraftTerraformYAMLPath)
-  const cloudcraftTerraform = yaml.load(cloudcraftTerraformYAMLContents)
+  for (const sourceFile of sourceFiles) {
+    const builtFile = sourceFile
+      .replace(new RegExp('.+' + fsPath.sep + 'terraform'), buildDir)
+      .replace(/\.yaml$/, '.json')
 
-  const terraformMainPath = fsPath.join(buildDir, 'main.tf.json')
-  const terraformMain = JSON.stringify(cloudcraftTerraform, null, '  ')
+    const buildDirPromise = fs.mkdir(fsPath.dirname(builtFile), { recursive : true })
 
-  await buildDirPromise
-  await fs.writeFile(terraformMainPath, terraformMain)
+    const yamlContents = await fs.readFile(sourceFile)
+    const data = yaml.load(yamlContents)
+    const jsonContents = JSON.stringify(data, null, '  ')
+
+    await buildDirPromise
+    await fs.writeFile(builtFile, jsonContents)
+  }
 }
 
-const stageTerraformVars = async({ billingAccountName, organizationName/*, projectId */, serverType}) => {
+const stageTerraformVars = async({ billingAccountName, organizationName/*, projectId */, serverType }) => {
   const buildDirPromise = fs.mkdir(buildDir, { recursive : true })
 
   const orgId = organizationName.slice(14) // remove 'organizations/' from the name
@@ -53,4 +60,4 @@ const stageTerraformVars = async({ billingAccountName, organizationName/*, proje
   await fs.writeFile(varsPath, varsContent)
 }
 
-export { deployTerraform, stageTerraformMain, stageTerraformVars }
+export { deployTerraform, stageTerraformFiles, stageTerraformVars }

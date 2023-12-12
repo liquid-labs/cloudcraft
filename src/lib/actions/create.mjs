@@ -3,7 +3,7 @@ import { selectBillingAccount } from './lib/select-billing-account'
 // import { selectBucket } from './lib/select-bucket'
 import { selectOrg } from './lib/select-org'
 import { selectProject } from './lib/select-project'
-import { deployTerraform, stageTerraformMain, stageTerraformVars } from './lib/terraform-lib'
+import { deployTerraform, stageTerraformFiles, stageTerraformVars } from './lib/terraform-lib'
 
 const create = async({ serverType = 'bedrock' }) => {
   const config = await getConfig()
@@ -22,7 +22,7 @@ const create = async({ serverType = 'bedrock' }) => {
 
   await Promise.all([
     saveConfig(config),
-    stageTerraformMain(),
+    stageTerraformFiles(),
     stageTerraformVars({ billingAccountName, organizationName/*, projectId */, serverType })
   ])
 

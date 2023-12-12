@@ -8,31 +8,31 @@ const handleHelp = ({ argv }) => {
   let sections
   if (helpCommand === undefined) {
     sections = [
-      { header: 'cloudcraft', content: 'Manage Minecraft servers in the cloud.' },
-      { 
-        header: 'Usage', 
-        content: `cloudcraft [command] [options]
+      { header : 'cloudcraft', content : 'Manage Minecraft servers in the cloud.' },
+      {
+        header  : 'Usage',
+        content : `cloudcraft [command] [options]
 
-Use 'cloudcraft help [command]' to get details on command options.` 
+Use 'cloudcraft help [command]' to get details on command options.`
       },
-      { 
-        header: 'Commands', 
-        content: commands
-      },
+      {
+        header  : 'Commands',
+        content : commands
+      }
     ]
   }
   else if (helpCommand === 'create') {
     const createOptionsSansDefault = structuredClone(createOptionsDef)
-    createOptionsSansDefault.splice(createOptionsSansDefault.findIndex(({ defaultOption }) => defaultOption ), 1)
+    createOptionsSansDefault.splice(createOptionsSansDefault.findIndex(({ defaultOption }) => defaultOption), 1)
     sections = [
-      { 
-        header: 'cloudcraft create [options] [name]', 
-        content: commands.find(({ name }) => name === 'create').summary
+      {
+        header  : 'cloudcraft create [options] [name]',
+        content : commands.find(({ name }) => name === 'create').summary
       },
-      { header: 'Options', optionList: createOptionsSansDefault},
-      { 
-        header: 'Details',
-        content: `Creates a server named {underline name}. This is, by default, a 'bedrock' server.`
+      { header : 'Options', optionList : createOptionsSansDefault },
+      {
+        header  : 'Details',
+        content : 'Creates a server named {underline name}. This is, by default, a \'bedrock\' server.'
       }
     ]
   }

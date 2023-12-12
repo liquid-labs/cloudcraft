@@ -6,7 +6,7 @@ import { handleCreate } from './lib/handle-create'
 import { handleHelp } from './lib/handle-help'
 
 const cloudcraft = async() => {
-  const mainOptions = commandLineArgs(mainOptionsDef, { stopAtFirstUnknown: true })
+  const mainOptions = commandLineArgs(mainOptionsDef, { stopAtFirstUnknown : true })
   const argv = mainOptions._unknown || []
 
   const { command } = mainOptions

@@ -46,10 +46,10 @@ const selectProject = async({ config, organizationName, requireDisplayName = fal
   if (projectDisplayName === CREATE_LABEL) {
     const createIB = {
       actions : [
-        { 
-          prompt : "What should the new project be called? (use lowercase alphanumeric + '-')", 
-          requireMatch: '^[a-z0-9-]+$',
-          parameter : 'PROJ_ID' 
+        {
+          prompt       : "What should the new project be called? (use lowercase alphanumeric + '-')",
+          requireMatch : '^[a-z0-9-]+$',
+          parameter    : 'PROJ_ID'
         }
       ]
     }
