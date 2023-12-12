@@ -1,35 +1,7 @@
 variable:
-  billing_account_id:
-    description: ID of the billing account to use for the project.
-    type: string
+  project_id:
+    description: The project ID.
     nullable: false
-  vm_managers:
-    description: Name of group with permisions to activate and deactivate the server.
-    type: string
-    default: cloudcraft-users
-  network_name:
-    description: The name of the network the server resides in.
-    type: string
-    default: cloudcraft-network
-    nullable: false
-  org_id:
-    description: The name of hosting organization's ID.
-    nullable: false
-  region:
-    description: The region where to build the project.
-    type: string
-    default: us-central1
-    nullable: false
-  server_type:
-    description: Takes 'java' or 'bedrock'.
-    default: bedrock
-    nullable: false
-  zone:
-    description: The zone where to build the project.
-    type: string
-    default: us-central1-c
-    nullable: false
-  # passthrough vars
   # disk vars
   host_image:
     description: Reference to base image.
@@ -52,8 +24,19 @@ variable:
     type: string
     default: n1-standard-1 # has 7.5G memory
     nullable: false
+  server_type:
+    description: The Minecraft server type to launch.
   cloudcraft_server_memory:
     description: The amount of memory to dedicate to the Docker-based Minecraft server.
     type: string
     default: 6.5G # leaves 1G in default setup
- 
+  server_protocol:
+    description: The protocol used by the Minecraft server.
+    nullable: false
+  ext_port:
+    description: The external ports to map on the Minecraft server.
+    nullable: false
+  network:
+    description: The network resource where the host resides.
+  subnet:
+    description: The subnet resource where the host resides.

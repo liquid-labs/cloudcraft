@@ -1,10 +1,6 @@
 locals:
-  server_image: '${var.server_type == "bedrock" ? "itzg/minecraft-bedrock-server" : "itzg/minecraft-server"}'
-  ext_port: '${var.server_type == "bedrock" ? 19132 : 25565}'
   server_protocol: '${var.server_type == "bedrock" ? "udp" : "tcp"}'
-  host_bind_dir:
-    value: /var/lib/docker/cloudcraft
-    description: "The path on the host instance to bind to the container's '/data' dir where all the world and other server state files are stored. Because the container optimized image limits '/var' in general with noexec, we store it under the docker working dir because it is stateful and allows execution. Refer to: https://cloud.google.com/container-optimized-os/docs/concepts/security#filesystem for details on the COS mount permissions."
+  ext_port: '${var.server_type == "bedrock" ? 19132 : 25565}'
 
 terraform:
   backend:
@@ -26,7 +22,6 @@ resource:
     project_id:
       byte_length: 8
       prefix: cloudcraft-
-
 
   # Create a project where the resources live
   google_project:
@@ -51,26 +46,6 @@ resource:
       display_name: cloudcraft_runner
       project: ${random_id.project_id.hex}
       depends_on: [google_project.cloudcraft-project]
-      
-  # Permenant Minecraft disk, stays around when VM is off
-  google_compute_disk:
-    cloudcraft_disk:
-      name: cloudcraft-disk
-      type: pd-standard
-      zone: ${var.zone}
-      image: ${var.host_image}
-      size: ${var.compute_disk_size}
-      lifecycle:
-        prevent_destroy: true
-      project: ${random_id.project_id.hex}
-      depends_on: [google_project.cloudcraft-project]
-    
-  # Permenant IP address, stays around when VM is off
-  google_compute_address:
-    cloudcraft_ip:
-      name: cloudcraft-ip
-      project: ${random_id.project_id.hex}
-      depends_on: [google_project.cloudcraft-project]
 
   # Create a private network so the cloudcraft instance cannot access any other resources.
   google_compute_network:
@@ -86,72 +61,6 @@ resource:
       ip_cidr_range: 10.2.0.0/16
       region: ${var.region}
       network: "${google_compute_network.cloudcraft_network.id}"
-      project: ${random_id.project_id.hex}
-  
-  # VM to run Minecraft, we use preemptible which will shutdown within 24 hours
-  google_compute_instance:
-    cloudcraft_host:
-      description: Hosts the cloudcraft server container.
-      name: ${var.host_name}
-      machine_type: ${var.machine_type}
-      tags: ["cloudcraft", "ssh"]
-      allow_stopping_for_update: true
-      metadata_startup_script: |
-        {
-          echo "Starting at $(date)"
-          mkdir -p ${local.host_bind_dir.value}
-          echo "
-        # credit to https://www.redhat.com/sysadmin/systemd-automate-recovery
-        # credit to https://gist.github.com/dotStart/ea0455714a0942474635
-        [Unit]
-        Description=cloudcraft-server
-        # Try 8 times, waiting 15 seconds in between each before giving up (2 min total)
-        StartLimitIntervalSec=15
-        StartLimitBurst=8
-        # Call cleanup script if necessary:
-        # OnFailure=my-app-recovery.service
-
-        [Service]
-        User=root
-        WorkingDirectory=/var/lib/docker
-        ExecStart=/bin/bash -c 'docker rm mc || true; \
-        docker run \
-          --detach \
-          --interactive \
-          --tty \
-          -p ${local.ext_port}:${local.ext_port}/${local.server_protocol} \
-          -e EULA=TRUE \
-          -e VERSION=LATEST \
-          -v ${local.host_bind_dir.value}:/data \
-          --name mc \
-          -e MEMORY=${var.cloudcraft_server_memory} \
-          ${local.server_image}:latest >> /var/log/mc-docker-run.log 2>&1'
-        Restart=always
-        
-        [Install]
-        WantedBy=multi-user.target" > /etc/systemd/system/cloudcraft.service && systemctl enable cloudcraft && systemctl start cloudcraft
-        } >> /var/log/startup-script.log 2>&1
-      
-      metadata:
-        enable-oslogin: true
-      boot_disk:
-        auto_delete: false
-        source: "${google_compute_disk.cloudcraft_disk.self_link}"
-      network_interface:
-        network: "${google_compute_network.cloudcraft_network.id}"
-        subnetwork: "${google_compute_subnetwork.cloudcraft_subnet.id}"
-        network_ip: 10.2.0.100
-        access_config:
-          nat_ip: "${google_compute_address.cloudcraft_ip.address}"
-      can_ip_forward: true
-      service_account:
-        email: cloudcraft-service-acct@${random_id.project_id.hex}.iam.gserviceaccount.com # google_service_account.cloudcraft_service_acct.email
-        scopes: ["userinfo-email"]
-      scheduling:
-        preemptible: true # Closes within 24 hours (sometimes sooner)
-        automatic_restart: false
-        provisioning_model: SPOT
-        instance_termination_action: STOP
       project: ${random_id.project_id.hex}
   
   google_compute_firewall:
@@ -231,3 +140,26 @@ resource:
 #      role: "${google_project_iam_custom_role.instance_lister.id}" # roles/cloudcraft_instances_lister
 #      member: "group:${var.vm_managers}"
 # end resources
+
+module:
+  vm_instance:
+    source: ./modules/vm-instance
+    depends_on:
+      - google_project.cloudcraft-project
+      - google_compute_network.cloudcraft_network
+      - google_compute_subnetwork.cloudcraft_subnet
+
+    # input vars
+    project_id: ${random_id.project_id.hex}
+    # disk vars
+    host_image: ${var.host_image}
+    compute_disk_size: ${var.compute_disk_size}
+    # vm vars
+    host_name: ${var.host_name}
+    machine_type: ${var.machine_type}
+    server_type: ${var.server_type}
+    cloudcraft_server_memory: ${var.cloudcraft_server_memory}
+    server_protocol: ${local.server_protocol}
+    ext_port: ${local.ext_port}
+    network: ${google_compute_network.cloudcraft_network}
+    subnet: ${google_compute_subnetwork.cloudcraft_subnet}

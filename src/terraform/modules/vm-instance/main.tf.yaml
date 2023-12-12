@@ -1,0 +1,94 @@
+terraform:
+  required_providers:
+    google:
+      source: hashicorp/google
+      version: '>= 4.27.0'
+
+locals:
+  server_image: '${var.server_type == "bedrock" ? "itzg/minecraft-bedrock-server" : "itzg/minecraft-server"}'
+  host_bind_dir:
+    value: /var/lib/docker/cloudcraft
+    description: "The path on the host instance to bind to the container's '/data' dir where all the world and other server state files are stored. Because the container optimized image limits '/var' in general with noexec, we store it under the docker working dir because it is stateful and allows execution. Refer to: https://cloud.google.com/container-optimized-os/docs/concepts/security#filesystem for details on the COS mount permissions."
+
+resource:
+  # Permenant IP address, stays around when VM is off
+  google_compute_address:
+    cloudcraft_ip:
+      name: cloudcraft-ip
+      project: ${var.project_id}
+
+  # Permenant Minecraft disk, stays around when VM is off
+  google_compute_disk:
+    cloudcraft_disk:
+      name: cloudcraft-disk
+      type: pd-standard
+      image: ${var.host_image}
+      size: ${var.compute_disk_size}
+      lifecycle:
+        prevent_destroy: true
+      project: ${var.project_id}
+
+  google_compute_instance:
+    cloudcraft_host:
+      description: Hosts the cloudcraft server container.
+      name: ${var.host_name}
+      machine_type: ${var.machine_type}
+      tags: ["cloudcraft", "ssh"]
+      allow_stopping_for_update: true
+      metadata_startup_script: |
+        {
+          echo "Starting at $(date)"
+          mkdir -p ${local.host_bind_dir.value}
+          echo "
+        # credit to https://www.redhat.com/sysadmin/systemd-automate-recovery
+        # credit to https://gist.github.com/dotStart/ea0455714a0942474635
+        [Unit]
+        Description=cloudcraft-server
+        # Try 8 times, waiting 15 seconds in between each before giving up (2 min total)
+        StartLimitIntervalSec=15
+        StartLimitBurst=8
+        # Call cleanup script if necessary:
+        # OnFailure=my-app-recovery.service
+
+        [Service]
+        User=root
+        WorkingDirectory=/var/lib/docker
+        ExecStart=/bin/bash -c 'docker rm mc || true; \
+        docker run \
+          --detach \
+          --interactive \
+          --tty \
+          -p ${var.ext_port}:${var.ext_port}/${var.server_protocol} \
+          -e EULA=TRUE \
+          -e VERSION=LATEST \
+          -v ${local.host_bind_dir.value}:/data \
+          --name mc \
+          -e MEMORY=${var.cloudcraft_server_memory} \
+          ${local.server_image}:latest >> /var/log/mc-docker-run.log 2>&1'
+        Restart=always
+        
+        [Install]
+        WantedBy=multi-user.target" > /etc/systemd/system/cloudcraft.service && systemctl enable cloudcraft && systemctl start cloudcraft
+        } >> /var/log/startup-script.log 2>&1
+      
+      metadata:
+        enable-oslogin: true
+      boot_disk:
+        auto_delete: false
+        source: "${google_compute_disk.cloudcraft_disk.self_link}"
+      network_interface:
+        network: "${var.network.id}"
+        subnetwork: "${var.subnet.id}"
+        network_ip: 10.2.0.100
+        access_config:
+          nat_ip: "${google_compute_address.cloudcraft_ip.address}"
+      can_ip_forward: true
+      service_account:
+        email: cloudcraft-service-acct@${var.project_id}.iam.gserviceaccount.com # google_service_account.cloudcraft_service_acct.email
+        scopes: ["userinfo-email"]
+      scheduling:
+        preemptible: true # Closes within 24 hours (sometimes sooner)
+        automatic_restart: false
+        provisioning_model: SPOT
+        instance_termination_action: STOP
+      project: ${var.project_id}

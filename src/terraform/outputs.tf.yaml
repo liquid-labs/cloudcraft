@@ -3,5 +3,5 @@ output:
     value: ${random_id.project_id.hex}
     description: The project ID.
   ip_address:
-    value: ${google_compute_address.cloudcraft_ip.address}
+    value: ${module.vm_instance.ip_address.address}
     description: The IP address of the Minecraft server.

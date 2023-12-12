@@ -1,0 +1,4 @@
+output:
+  ip_address:
+    value: ${google_compute_address.cloudcraft_ip}
+    description: Data on the IP address created for the VM.
