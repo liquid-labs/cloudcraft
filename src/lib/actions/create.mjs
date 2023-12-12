@@ -5,7 +5,7 @@ import { selectOrg } from './lib/select-org'
 import { selectProject } from './lib/select-project'
 import { deployTerraform, stageTerraformMain, stageTerraformVars } from './lib/terraform-lib'
 
-const create = async({ serverType }) => {
+const create = async({ serverType = 'bedrock' }) => {
   const config = await getConfig()
   if (!(config.serverType === serverType || config.serverType === undefined && serverType === 'bedrock')) {
     const currType = (config.serverType && `'${config.serverType}'`) || "'bedrock' (default)"
