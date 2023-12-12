@@ -160,6 +160,5 @@ module:
     server_type: ${var.server_type}
     cloudcraft_server_memory: ${var.cloudcraft_server_memory}
     server_protocol: ${local.server_protocol}
-    ext_port: ${local.ext_port}
     network: ${google_compute_network.cloudcraft_network}
     subnet: ${google_compute_subnetwork.cloudcraft_subnet}

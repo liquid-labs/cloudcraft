@@ -33,9 +33,6 @@ variable:
   server_protocol:
     description: The protocol used by the Minecraft server.
     nullable: false
-  ext_port:
-    description: The external ports to map on the Minecraft server.
-    nullable: false
   network:
     description: The network resource where the host resides.
   subnet:
