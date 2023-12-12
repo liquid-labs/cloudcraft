@@ -1,6 +1,6 @@
 locals:
-  server_protocol: '${var.server_type == "bedrock" ? "udp" : "tcp"}'
-  ext_port: '${var.server_type == "bedrock" ? 19132 : 25565}'
+  bedrock_port: 19132
+  java_port: 25565
 
 terraform:
   backend:
@@ -69,7 +69,7 @@ resource:
       network: ${var.network_name}
       allow:
         - protocol: tcp
-          ports: ["22", "${local.ext_port}"] # TODO: why is local.ext_port listed here?
+          ports: ["22"]
       direction: INGRESS
       priority: 1000
       source_ranges: ["0.0.0.0/0"]
@@ -89,11 +89,15 @@ resource:
     cloudcraft_service:
       name: cloudcraft-service
       network: ${var.network_name}
+      # TODO: In theory, this is dependent on the types of servers being run, but we don't have knowledge of that at 
+      # this level so it's not clear how to restrict this in a multi-server setup.
       allow:
         - protocol: tcp
-          ports: ["${local.ext_port}"]
+          # TODO: do we need the bedrock port here or is it pure UDP?
+          ports: ["${local.bedrock_port}", "${local.java_port}"]
         - protocol: udp
-          ports: ["${local.ext_port}"]
+          # TODO: do we need the java port here, or is it pure UDP?
+          ports: ["${local.bedrock_port}", "${local.java_port}"]
       direction: INGRESS
       priority: 1000
       source_ranges: ["0.0.0.0/0"]
@@ -159,6 +163,5 @@ module:
     machine_type: ${var.machine_type}
     server_type: ${var.server_type}
     cloudcraft_server_memory: ${var.cloudcraft_server_memory}
-    server_protocol: ${local.server_protocol}
     network: ${google_compute_network.cloudcraft_network}
     subnet: ${google_compute_subnetwork.cloudcraft_subnet}

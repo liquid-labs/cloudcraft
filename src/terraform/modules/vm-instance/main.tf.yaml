@@ -6,6 +6,7 @@ terraform:
 
 locals:
   server_image: '${var.server_type == "bedrock" ? "itzg/minecraft-bedrock-server" : "itzg/minecraft-server"}'
+  server_protocol: '${var.server_type == "bedrock" ? "udp" : "tcp"}'
   ext_port: '${var.server_type == "bedrock" ? 19132 : 25565}'
   host_bind_dir:
     value: /var/lib/docker/cloudcraft
@@ -59,7 +60,7 @@ resource:
           --detach \
           --interactive \
           --tty \
-          -p ${local.ext_port}:${local.ext_port}/${var.server_protocol} \
+          -p ${local.ext_port}:${local.ext_port}/${local.server_protocol} \
           -e EULA=TRUE \
           -e VERSION=LATEST \
           -v ${local.host_bind_dir.value}:/data \

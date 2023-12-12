@@ -30,9 +30,6 @@ variable:
     description: The amount of memory to dedicate to the Docker-based Minecraft server.
     type: string
     default: 6.5G # leaves 1G in default setup
-  server_protocol:
-    description: The protocol used by the Minecraft server.
-    nullable: false
   network:
     description: The network resource where the host resides.
   subnet:
