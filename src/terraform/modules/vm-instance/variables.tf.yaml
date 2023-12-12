@@ -2,6 +2,9 @@ variable:
   project_id:
     description: The project ID.
     nullable: false
+  name: # used to create unique ip, disk, and host names
+    description: Name cloudcraft server instance.
+    nullable: false
   # disk vars
   host_image:
     description: Reference to base image.
@@ -15,10 +18,6 @@ variable:
     default: 10 # this is the size of the cos-109-lts image
     nullable: false
   # vm vars
-  host_name:
-    description: Name of host running the Docker-based Minecraft server.
-    default: cloudcraft-docker-host
-    nullable: false
   machine_type:
     description: The instance type to use for the cloudcraft server.
     type: string
@@ -26,11 +25,19 @@ variable:
     nullable: false
   server_type:
     description: The Minecraft server type to launch.
+    default: bedrock
+    nullable: false
   cloudcraft_server_memory:
     description: The amount of memory to dedicate to the Docker-based Minecraft server.
     type: string
     default: 6.5G # leaves 1G in default setup
+    nullable: false
+  internal_ip:
+    description: Where to connect to the internal network.
+    nullable: false
   network:
     description: The network resource where the host resides.
+    nullable: false
   subnet:
     description: The subnet resource where the host resides.
+    nullable: false

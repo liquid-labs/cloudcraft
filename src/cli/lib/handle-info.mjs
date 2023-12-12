@@ -2,9 +2,10 @@ import commandLineArgs from 'command-line-args'
 
 import { createOptionsDef, VALID_SERVER_TYPES } from './constants'
 import { handleHelp } from './handle-help'
-import { create } from '../../lib/actions'
+import { info } from '../../lib/actions'
 
-const handleCreate = async({ argv }) => {
+const handleInfo = async({ argv }) => {
+  /*
   const createOptions = commandLineArgs(createOptionsDef, { argv })
   const { name } = createOptions
   const serverType = createOptions['server-type'] // default set in 'create' if undefined
@@ -22,9 +23,9 @@ const handleCreate = async({ argv }) => {
   if (serverType !== undefined && !VALID_SERVER_TYPES.includes(serverType)) {
     process.stderr.write(`Invalid server type '${serverType}'; must be one of: ${VALID_SERVER_TYPES.join(', ')}\n`)
     process.exit(1)
-  }
+  }*/
 
-  await create({ name, serverType })
+  await info({})
 }
 
-export { handleCreate }
+export { handleInfo }

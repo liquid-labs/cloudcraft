@@ -16,24 +16,24 @@ resource:
   # Permenant IP address, stays around when VM is off
   google_compute_address:
     cloudcraft_ip:
-      name: cloudcraft-ip
+      name: cloudcraft-ip-${var.name}
       project: ${var.project_id}
 
   # Permenant Minecraft disk, stays around when VM is off
   google_compute_disk:
     cloudcraft_disk:
-      name: cloudcraft-disk
+      name: cloudcraft-disk-${var.name}
       type: pd-standard
       image: ${var.host_image}
       size: ${var.compute_disk_size}
       lifecycle:
-        prevent_destroy: true
+        prevent_destroy: false # true
       project: ${var.project_id}
 
   google_compute_instance:
     cloudcraft_host:
       description: Hosts the cloudcraft server container.
-      name: ${var.host_name}
+      name: cloudcraft-host-${var.name}
       machine_type: ${var.machine_type}
       tags: ["cloudcraft", "ssh"]
       allow_stopping_for_update: true
@@ -81,7 +81,7 @@ resource:
       network_interface:
         network: "${var.network.id}"
         subnetwork: "${var.subnet.id}"
-        network_ip: 10.2.0.100
+        network_ip: ${var.internal_ip} # 10.2.0.100
         access_config:
           nat_ip: "${google_compute_address.cloudcraft_ip.address}"
       can_ip_forward: true

@@ -2,6 +2,6 @@ output:
   project_id:
     value: ${random_id.project_id.hex}
     description: The project ID.
-  ip_address:
-    value: ${module.vm_instance.ip_address.address}
-    description: The IP address of the Minecraft server.
+  servers:
+    value: ${module.vm_instance}
+    description: The information on each of the servers.

@@ -6,15 +6,14 @@ import yaml from 'js-yaml'
 
 import { tryExecAsync } from '@liquid-labs/shell-toolkit'
 
-import { CONFIG_DIR } from './constants'
+import { BUILD_DIR, CONFIG_DIR } from './constants'
 
-const buildDir = fsPath.join(CONFIG_DIR, 'build')
 const varFileName = 'terraform.tfvars.json'
 
 const deployTerraform = async() => {
-  await tryExecAsync(`cd '${buildDir}' && terraform init`, { silent : false })
+  await tryExecAsync(`cd '${BUILD_DIR}' && terraform init`, { silent : false })
   await tryExecAsync(
-    `cd '${buildDir}' && terraform apply -var-file="${varFileName}" -auto-approve`,
+    `cd '${BUILD_DIR}' && terraform apply -var-file="${varFileName}" -auto-approve`,
     { noThrow : true, silent : false }
   )
 }
@@ -25,7 +24,7 @@ const stageTerraformFiles = async() => {
 
   for (const sourceFile of sourceFiles) {
     const builtFile = sourceFile
-      .replace(new RegExp('.+' + fsPath.sep + 'terraform'), buildDir)
+      .replace(new RegExp('.+' + fsPath.sep + 'terraform'), BUILD_DIR)
       .replace(/\.yaml$/, '.json')
 
     const buildDirPromise = fs.mkdir(fsPath.dirname(builtFile), { recursive : true })
@@ -39,8 +38,8 @@ const stageTerraformFiles = async() => {
   }
 }
 
-const stageTerraformVars = async({ billingAccountName, organizationName/*, projectId */, serverType }) => {
-  const buildDirPromise = fs.mkdir(buildDir, { recursive : true })
+const stageTerraformVars = async({ billingAccountName, organizationName/*, projectId */, servers }) => {
+  const buildDirPromise = fs.mkdir(BUILD_DIR, { recursive : true })
 
   const orgId = organizationName.slice(14) // remove 'organizations/' from the name
   const billingAccountId = billingAccountName.slice(16)
@@ -49,10 +48,10 @@ const stageTerraformVars = async({ billingAccountName, organizationName/*, proje
     billing_account_id : billingAccountId,
     org_id             : orgId,
     // project_id         : projectId,
-    server_type        : serverType
+    servers
   }
 
-  const varsPath = fsPath.join(buildDir, varFileName)
+  const varsPath = fsPath.join(BUILD_DIR, varFileName)
 
   const varsContent = JSON.stringify(vars, null, '  ')
 

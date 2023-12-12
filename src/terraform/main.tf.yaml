@@ -147,6 +147,8 @@ resource:
 
 module:
   vm_instance:
+    for_each: ${var.servers}
+
     source: ./modules/vm-instance
     depends_on:
       - google_project.cloudcraft-project
@@ -155,13 +157,14 @@ module:
 
     # input vars
     project_id: ${random_id.project_id.hex}
+    name: ${each.key}
     # disk vars
-    host_image: ${var.host_image}
-    compute_disk_size: ${var.compute_disk_size}
+    host_image: ${each.value.host_image}
+    compute_disk_size: ${each.value.compute_disk_size}
     # vm vars
-    host_name: ${var.host_name}
-    machine_type: ${var.machine_type}
-    server_type: ${var.server_type}
-    cloudcraft_server_memory: ${var.cloudcraft_server_memory}
+    machine_type: ${each.value.machine_type}
+    internal_ip: ${each.value.internal_ip}
+    server_type: ${each.value.server_type}
+    cloudcraft_server_memory: ${each.value.cloudcraft_server_memory}
     network: ${google_compute_network.cloudcraft_network}
     subnet: ${google_compute_subnetwork.cloudcraft_subnet}
