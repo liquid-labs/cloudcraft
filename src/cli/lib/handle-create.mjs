@@ -1,7 +1,7 @@
 import commandLineArgs from 'command-line-args'
 
 import { createOptionsDef, VALID_SERVER_TYPES } from './constants'
-import { handleHelp } from './handle-help'
+// import { handleHelp } from './handle-help'
 import { create } from '../../lib/actions'
 
 const handleCreate = async({ argv }) => {

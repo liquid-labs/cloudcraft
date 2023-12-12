@@ -1,5 +1,4 @@
 import commandLineArgs from 'command-line-args'
-import commandLineUsage from 'command-line-usage'
 
 import { mainOptionsDef } from './lib/constants'
 import { handleCreate } from './lib/handle-create'
