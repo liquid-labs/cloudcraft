@@ -1,25 +1,72 @@
-import { getConfig, saveConfig } from './lib/config-lib'
-import { selectBillingAccount } from './lib/select-billing-account'
-// import { selectBucket } from './lib/select-bucket'
-import { selectOrg } from './lib/select-org'
-import { selectProject } from './lib/select-project'
-import { deployTerraform, stageTerraformMain, stageTerraformVars } from './lib/terraform-lib'
+import commandLineArgs from 'command-line-args'
+import commandLineUsage from 'command-line-usage'
 
-async function start() {
-  const config = await getConfig()
+import { create } from '../lib/actions'
 
-  const { organizationName } = await selectOrg({ config }) || {}
-  // const { projectId, projectName } = await selectProject({ config, organizationName })
-  const { billingAccountName } = await selectBillingAccount({ config })
-  // const bucketName = await selectBucket({ config, projectId })
+const VALID_SERVER_TYPES = ['bedrock', 'java']
 
-  await Promise.all([
-    saveConfig(config),
-    stageTerraformMain(),
-    stageTerraformVars({ billingAccountName, organizationName/*, projectId */})
-  ])
+const commands = [
+  { name: 'create', summary: 'Creates (sets up) a cloud-based Minecraft server.' },
+  { name: 'help', summary: 'Prints command help.'}
+]
 
-  await deployTerraform()
+const mainOptionsDef = [
+  { name: 'command', defaultOption: true }
+]
+
+const createOptionsDef = [
+  { name: 'server-type', default: 'bedrock', description: `May be one of: ${VALID_SERVER_TYPES.join(', ')}` }
+]
+
+const cloudcraft = async() => {
+  const mainOptions = commandLineArgs(mainOptionsDef, { stopAtFirstUnknown: true })
+  const argv = mainOptions._unknown || []
+
+  const { command } = mainOptions
+
+  if (command === 'create') {
+    const createOptions = commandLineArgs(createOptionsDef, { argv })
+
+    const serverType = createOptions['server-type'] 
+    if (!VALID_SERVER_TYPES.includes(serverType)) {
+      process.stderr.write(`Invalid server type '${serverType}'; must be one of: ${VALID_SERVER_TYPES.join(', ')}`)
+    }
+
+    await create({ serverType })
+  }
+  else if (command === 'help' || command === undefined) {
+    const helpCommand = argv[0]
+
+    let sections
+    if (helpCommand === undefined) {
+      sections = [
+        { header: 'cloudcraft', content: 'Manage Minecraft servers in the cloud.' },
+        { 
+          header: 'Usage', 
+          content: `cloudcraft [command] [options]
+
+  Use 'cloudcraft help [command]' to get details on command options.` 
+        },
+        { 
+          header: 'Commands', 
+          content: commands
+        },
+      ]
+    }
+    else if (helpCommand === 'create') {
+      sections = [
+        { header: 'cloudcraft create', content: commands.find(({ name }) => name === 'create').summary },
+        { header: 'Options', optionList: createOptionsDef}
+      ]
+    }
+    else {
+      process.stderr.write(`Cannot provide help on unknown command '${helpCommand}'.`)
+      process.exit(1)
+    }
+
+    const usage = commandLineUsage(sections)
+    process.stdout.write(usage + '\n')
+  }
 }
 
-start()
+export { cloudcraft }

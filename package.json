@@ -1,10 +1,19 @@
 {
   "name": "@liquid-labs/cloudcraft",
   "version": "1.0.0-alpha.0",
-  "description": "",
+  "description": "CLI to setup and manage your own cloud-based Minecraft server.",
   "main": "dist/cloudcraft.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "make",
+    "lint": "make lint",
+    "lint:fix": "make lint-fix",
+    "test": "make test",
+    "prepack": "make build",
+    "preversion": "npm test && make lint",
+    "qa": "make qa"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "keywords": [],
   "author": "Zane Rockenbaugh <zane@liquid-labs.com>",
@@ -24,8 +33,11 @@
     "@google-cloud/billing": "^4.0.2",
     "@google-cloud/resource-manager": "^5.0.1",
     "@google-cloud/storage": "^7.7.0",
+    "@liquid-labs/plugable-express-cli": "^1.0.0-alpha.18",
     "@liquid-labs/question-and-answer": "^1.0.0-alpha.15",
     "@liquid-labs/shell-toolkit": "^1.0.0-alpha.8",
+    "command-line-args": "^5.2.1",
+    "command-line-usage": "^7.0.1",
     "js-yaml": "^4.1.0"
   },
   "devDependencies": {

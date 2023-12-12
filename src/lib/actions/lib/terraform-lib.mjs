@@ -32,18 +32,17 @@ const stageTerraformMain = async() => {
   await fs.writeFile(terraformMainPath, terraformMain)
 }
 
-const stageTerraformVars = async({ billingAccountName, organizationName/*, projectId */}) => {
+const stageTerraformVars = async({ billingAccountName, organizationName/*, projectId */, serverType}) => {
   const buildDirPromise = fs.mkdir(buildDir, { recursive : true })
 
   const orgId = organizationName.slice(14) // remove 'organizations/' from the name
   const billingAccountId = billingAccountName.slice(16)
-  console.log('billingAccountName:', billingAccountName) // DEBUG
-  console.log('billingAccountId:', billingAccountId) // DEBUG
 
   const vars = {
     billing_account_id : billingAccountId,
-    org_id             : orgId
-    // project_id         : projectId
+    org_id             : orgId,
+    // project_id         : projectId,
+    server_type        : serverType
   }
 
   const varsPath = fsPath.join(buildDir, varFileName)

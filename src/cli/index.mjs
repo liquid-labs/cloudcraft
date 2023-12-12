@@ -1,1 +1,3 @@
-import './cloudcraft'
+import { cloudcraft } from './cloudcraft'
+
+cloudcraft()

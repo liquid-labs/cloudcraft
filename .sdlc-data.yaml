@@ -41,6 +41,11 @@ projects:
           - builder: '@liquid-labs/sdlc-projects-workflow-local-node-build'
             version: 1.0.0-alpha.5
             priority: 50
+            path: make/50-cloudcraft-js.mk
+            purpose: Builds the 'dist/cloudcraft.js' artifact.
+          - builder: '@liquid-labs/sdlc-projects-workflow-local-node-build'
+            version: 1.0.0-alpha.5
+            priority: 50
             path: make/50-cloudcraft-exec-js.mk
             purpose: Builds the 'dist/cloudcraft-exec.js' artifact.
           - builder: '@liquid-labs/sdlc-projects-workflow-local-node-build'
