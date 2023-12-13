@@ -37,9 +37,9 @@ Use 'cloudcraft help [command]' to get details on command options.`
     ]
   }
   else if (helpCommand === 'info') {
-    const infoOptionsSansDefault = structuredClone(infoOptionsDef)
+    const infoOptionsSansDefault = infoOptionsDef.map((v) => Object.assign({}, v))
     infoOptionsSansDefault.splice(infoOptionsSansDefault.findIndex(({ defaultOption }) => defaultOption), 1)
-    section = [
+    sections = [
       {
         header: 'cloudcraft info [options] [name]',
         content: commands.find(({ name }) => name === 'info').summary
@@ -49,6 +49,11 @@ Use 'cloudcraft help [command]' to get details on command options.`
         header: 'Details',
         content: 'Displays info about the servers or, if {underline name} supplied, a server. By default will display all information. If one or more info select options is provided, then it will only display that information.'
       }
+    ]
+  }
+  else if (helpCommand === 'list') {
+    sections = [
+      { header : 'cloudcraft list', content: commands.find(({ name }) => name === 'list').summary }
     ]
   }
   else {
