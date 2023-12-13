@@ -1,6 +1,6 @@
 import commandLineUsage from 'command-line-usage'
 
-import { commands, createOptionsDef } from './constants'
+import { commands, createOptionsDef, infoOptionsDef } from './constants'
 
 const handleHelp = ({ argv }) => {
   const helpCommand = argv[0]
@@ -11,7 +11,7 @@ const handleHelp = ({ argv }) => {
       { header : 'cloudcraft', content : 'Manage Minecraft servers in the cloud.' },
       {
         header  : 'Usage',
-        content : `cloudcraft [command] [options]
+        content : `cloudcraft <command> <options>
 
 Use 'cloudcraft help [command]' to get details on command options.`
       },
@@ -26,13 +26,28 @@ Use 'cloudcraft help [command]' to get details on command options.`
     createOptionsSansDefault.splice(createOptionsSansDefault.findIndex(({ defaultOption }) => defaultOption), 1)
     sections = [
       {
-        header  : 'cloudcraft create [options] [name]',
+        header  : 'cloudcraft create <options> [name]',
         content : commands.find(({ name }) => name === 'create').summary
       },
       { header : 'Options', optionList : createOptionsSansDefault },
       {
         header  : 'Details',
         content : 'Creates a server named {underline name}. This is, by default, a \'bedrock\' server.'
+      }
+    ]
+  }
+  else if (helpCommand === 'info') {
+    const infoOptionsSansDefault = structuredClone(infoOptionsDef)
+    infoOptionsSansDefault.splice(infoOptionsSansDefault.findIndex(({ defaultOption }) => defaultOption), 1)
+    section = [
+      {
+        header: 'cloudcraft info [options] [name]',
+        content: commands.find(({ name }) => name === 'info').summary
+      },
+      { header: 'Options', optionList: infoOptionsSansDefault },
+      {
+        header: 'Details',
+        content: 'Displays info about the servers or, if {underline name} supplied, a server. By default will display all information. If one or more info select options is provided, then it will only display that information.'
       }
     ]
   }
