@@ -15,10 +15,7 @@ const handleHelp = ({ argv }) => {
 
 Use 'cloudcraft help [command]' to get details on command options.`
       },
-      {
-        header  : 'Commands',
-        content : commands
-      }
+      { header  : 'Commands', content : commands }
     ]
   }
   else if (helpCommand === 'create') {
