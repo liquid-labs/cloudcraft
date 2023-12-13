@@ -4,11 +4,10 @@ import pick from 'lodash/pick'
 import { tryExecAsync } from '@liquid-labs/shell-toolkit'
 
 import { BUILD_DIR } from './lib/constants'
+import { getServersData } from './lib/terraform-lib'
 
 const info = async({ name, selectFields }) => {
-  const jsonContent = (await tryExecAsync(`cd '${BUILD_DIR}' && terraform output -json`)).stdout
-  const data = JSON.parse(jsonContent)
-  const serversData = data.servers.value
+  const serversData = await getServersData()
 
   if (name !== undefined && selectFields.length === 1) {
     process.stdout.write(serversData[name][selectFields[0]] + '\n')

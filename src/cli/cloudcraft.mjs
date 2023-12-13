@@ -5,6 +5,7 @@ import { handleCreate } from './lib/handle-create'
 import { handleHelp } from './lib/handle-help'
 import { handleInfo } from './lib/handle-info'
 import { handleList } from './lib/handle-list'
+import { handleStatus } from './lib/handle-status'
 
 const cloudcraft = async() => {
   const mainOptions = commandLineArgs(mainOptionsDef, { stopAtFirstUnknown : true })
@@ -23,6 +24,8 @@ const cloudcraft = async() => {
       handleInfo({ argv }); break
     case 'list':
       handleList({ argv }); break
+    case 'status':
+      handleStatus({ argv }); break
     default:
       process.stderr.write('Uknown command: ' + command + '\n\n')
       handleHelp()

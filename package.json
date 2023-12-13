@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@google-cloud/billing": "^4.0.2",
+    "@google-cloud/compute": "^4.1.0",
     "@google-cloud/resource-manager": "^5.0.1",
     "@google-cloud/storage": "^7.7.0",
     "@liquid-labs/plugable-express-cli": "^1.0.0-alpha.18",
@@ -40,7 +41,8 @@
     "command-line-usage": "^7.0.1",
     "find-plus": "^1.1.1",
     "js-yaml": "^4.1.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "ping": "^0.4.4"
   },
   "devDependencies": {
     "@liquid-labs/sdlc-resource-babel-and-rollup": "^1.0.0-alpha.5",

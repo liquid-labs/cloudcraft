@@ -18,6 +18,20 @@ const deployTerraform = async() => {
   )
 }
 
+const getServerData = async(name) => {
+  const serversData = await getServersData()
+
+  return serversData[name]
+}
+
+const getServersData = async() => {
+  const jsonContent = (await tryExecAsync(`cd '${BUILD_DIR}' && terraform output -json`)).stdout
+  const data = JSON.parse(jsonContent)
+  const serversData = data.servers.value
+
+  return serversData
+}
+
 const stageTerraformFiles = async() => {
   const terraformSrcPath = fsPath.join(__dirname, 'terraform')
   const sourceFiles = await find({ root : terraformSrcPath, tests : [({ name }) => name.endsWith('.yaml')] })
@@ -59,4 +73,4 @@ const stageTerraformVars = async({ billingAccountName, organizationName/*, proje
   await fs.writeFile(varsPath, varsContent)
 }
 
-export { deployTerraform, stageTerraformFiles, stageTerraformVars }
+export { deployTerraform, getServerData, getServersData, stageTerraformFiles, stageTerraformVars }

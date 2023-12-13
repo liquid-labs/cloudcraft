@@ -4,7 +4,8 @@ export const commands = [
   { name : 'create', summary : 'Creates (sets up) a cloud-based Minecraft server.' },
   { name : 'help', summary : 'Prints command help.' },
   { name : 'info', summary : 'Prints info about the server(s).'},
-  { name : 'list', summary : 'Lists Minecraft servers.' }
+  { name : 'list', summary : 'Lists Minecraft servers.' },
+  { name : 'status', summary : 'Displays the status of a server.' }
 ]
 
 export const mainOptionsDef = [
@@ -20,4 +21,9 @@ export const infoOptionsDef = [
   { name : 'name', defaultOption : true, description : 'The name of the server to get into on.' },
   { name : 'ip-address', type: Boolean, description : 'Select the public IP address for display.' },
   { name : 'machine-type', type: Boolean, description: 'Select the machine type for display.'}
+]
+
+export const statusOptionsDef = [
+  { name : 'name', defaultOption : true, description : 'The name of the server to describe.' },
+  { name : 'no-ping', type: Boolean, description : 'Skips the ping test when set.'}
 ]

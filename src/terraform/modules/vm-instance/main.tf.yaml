@@ -44,7 +44,7 @@ resource:
       tags: ["cloudcraft", "ssh"]
       allow_stopping_for_update: true
       metadata:
-        enable-oslogin: true
+        enable-oslogin: "TRUE"
       boot_disk:
         auto_delete: true
         source: "${google_compute_disk.cloudcraft_boot_disk.self_link}"
