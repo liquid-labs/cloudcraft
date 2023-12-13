@@ -21,13 +21,19 @@ resource:
 
   # Permenant Minecraft disk, stays around when VM is off
   google_compute_disk:
-    cloudcraft_disk:
-      name: cloudcraft-disk-${var.name}
+    cloudcraft_boot_disk:
+      name: cloudcraft-boot-disk-${var.name}
       type: pd-standard
       image: ${var.host_image}
-      size: ${var.compute_disk_size}
       lifecycle:
         prevent_destroy: false # true
+      project: ${var.project_id}
+    cloudcraft_data_disk:
+      name: cloudcraft-data-disk-${var.name}
+      type: pd-standard
+      size: ${var.compute_disk_size}
+      lifecycle:
+        prevent_destroy: true
       project: ${var.project_id}
 
   google_compute_instance:
@@ -37,10 +43,24 @@ resource:
       machine_type: ${var.machine_type}
       tags: ["cloudcraft", "ssh"]
       allow_stopping_for_update: true
+      metadata:
+        enable-oslogin: true
+      boot_disk:
+        auto_delete: true
+        source: "${google_compute_disk.cloudcraft_boot_disk.self_link}"
+      attached_disk:
+        source: ${google_compute_disk.cloudcraft_data_disk.self_link}
+        device_name: ${google_compute_disk.cloudcraft_data_disk.name}
       metadata_startup_script: |
         {
           echo "Starting at $(date)"
           mkdir -p ${local.host_bind_dir.value}
+          mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard \
+            /dev/disk/by-id/google-${google_compute_disk.cloudcraft_data_disk.name}
+          mount -o discard,defaults \
+            /dev/disk/by-id/google-${google_compute_disk.cloudcraft_data_disk.name} \
+            ${local.host_bind_dir.value}
+ 
           echo "
         # credit to https://www.redhat.com/sysadmin/systemd-automate-recovery
         # credit to https://gist.github.com/dotStart/ea0455714a0942474635
@@ -73,11 +93,6 @@ resource:
         WantedBy=multi-user.target" > /etc/systemd/system/cloudcraft.service && systemctl enable cloudcraft && systemctl start cloudcraft
         } >> /var/log/startup-script.log 2>&1
       
-      metadata:
-        enable-oslogin: true
-      boot_disk:
-        auto_delete: false
-        source: "${google_compute_disk.cloudcraft_disk.self_link}"
       network_interface:
         network: "${var.network.id}"
         subnetwork: "${var.subnet.id}"

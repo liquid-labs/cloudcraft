@@ -32,7 +32,7 @@ const create = async({
   let ipTuple4 = 10
   const serverData = Object.values(servers)
   let ipGuess = ipPrefix + ipTuple3 + '.' + ipTuple4
-  while (serverData.some(({ internalIP }) => internalIP === ipGuess)) {
+  while (serverData.some(({ internal_ip }) => internal_ip === ipGuess)) {
     if (ipTuple4 === 255) {
       ipTuple4 = 0
       ipTuple3 += 1
