@@ -5,8 +5,8 @@ output:
   host_image:
     value: ${var.host_image}
     description: The image to use for the base VM.
-  compute_disk_size:
-    value: ${var.compute_disk_size}
+  data_disk_size:
+    value: ${var.data_disk_size}
     description: The size of the base VM root disk, in GB.
   machine_type:
     value: ${var.machine_type}
@@ -14,8 +14,8 @@ output:
   server_type:
     value: ${var.server_type}
     description: The type of Minecraft server hosted.
-  cloudcraft_server_memory:
-    value: ${var.cloudcraft_server_memory}
+  server_memory:
+    value: ${var.server_memory}
     description: Memory of the hosted VM / Minecraft server.
   internal_ip:
     value: ${var.internal_ip}

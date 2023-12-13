@@ -4,9 +4,14 @@ import pick from 'lodash/pick'
 import { tryExecAsync } from '@liquid-labs/shell-toolkit'
 
 import { BUILD_DIR } from './lib/constants'
-import { getServersData } from './lib/terraform-lib'
+import { deployTerraform, getServersData, stageTerraformFiles } from './lib/terraform-lib'
 
-const info = async({ name, selectFields }) => {
+const info = async({ name, refresh, selectFields }) => {
+  if (refresh === true) {
+    stageTerraformFiles()
+    deployTerraform()
+  }
+
   const serversData = await getServersData()
 
   if (name !== undefined && selectFields.length === 1) {

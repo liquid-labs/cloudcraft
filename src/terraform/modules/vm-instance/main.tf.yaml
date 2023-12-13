@@ -31,7 +31,7 @@ resource:
     cloudcraft_data_disk:
       name: cloudcraft-data-disk-${var.name}
       type: pd-standard
-      size: ${var.compute_disk_size}
+      size: ${var.data_disk_size}
       lifecycle:
         prevent_destroy: true
       project: ${var.project_id}
@@ -85,7 +85,7 @@ resource:
           -e VERSION=LATEST \
           -v ${local.host_bind_dir.value}:/data \
           --name mc \
-          -e MEMORY=${var.cloudcraft_server_memory} \
+          -e MEMORY=${var.server_memory} \
           ${local.server_image}:latest >> /var/log/mc-docker-run.log 2>&1'
         Restart=always
         

@@ -35,8 +35,8 @@ variable:
     type: |
       map(
         object({
-          cloudcraft_server_memory = optional(string)
-          compute_disk_size = optional(string)
+          server_memory = optional(string)
+          data_disk_size = optional(string)
           host_image = optional(string)
           internal_ip = string
           machine_type = optional(string),

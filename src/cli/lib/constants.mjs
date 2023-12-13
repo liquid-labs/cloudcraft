@@ -20,7 +20,12 @@ export const createOptionsDef = [
 export const infoOptionsDef = [
   { name : 'name', defaultOption : true, description : 'The name of the server to get into on.' },
   { name : 'ip-address', type: Boolean, description : 'Select the public IP address for display.' },
-  { name : 'machine-type', type: Boolean, description: 'Select the machine type for display.'}
+  { name : 'machine-type', type: Boolean, description: 'Select the machine type for display.'},
+  { 
+    name : 'refresh', 
+    type: Boolean, 
+    description: 'Updates underlying terraform files and applies the results before reading the output.'
+  }
 ]
 
 export const statusOptionsDef = [

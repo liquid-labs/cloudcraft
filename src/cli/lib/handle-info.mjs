@@ -5,7 +5,7 @@ import { info } from '../../lib/actions'
 
 const handleInfo = async({ argv }) => {
   const infoOptions = commandLineArgs(infoOptionsDef, { argv })
-  const { name } = infoOptions
+  const { name, refresh } = infoOptions
 
   const selectFields = []
   if (infoOptions['ip-address'] === true) {
@@ -15,7 +15,7 @@ const handleInfo = async({ argv }) => {
     selectFields.push('machine_type')
   }
 
-  await info({ name, selectFields })
+  await info({ name, refresh, selectFields })
 }
 
 export { handleInfo }

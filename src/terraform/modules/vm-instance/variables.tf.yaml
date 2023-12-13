@@ -12,7 +12,7 @@ variable:
     # TODO: use google_compute_image data source to dynamically pull the latest
     default: projects/cos-cloud/global/images/cos-109-17800-66-32
     nullable: false
-  compute_disk_size:
+  data_disk_size:
     description: The size of the base host disk in GB.
     type: number
     default: 10 # this is the size of the cos-109-lts image
@@ -27,7 +27,7 @@ variable:
     description: The Minecraft server type to launch.
     default: bedrock
     nullable: false
-  cloudcraft_server_memory:
+  server_memory:
     description: The amount of memory to dedicate to the Docker-based Minecraft server.
     type: string
     default: 6.5G # leaves 1G in default setup

@@ -48,7 +48,7 @@ const create = async({
   const internalIP = ipGuess
 
   servers[name] = {
-    cloudcraft_server_memory : cloudcraftServerMemory,
+    server_memory : cloudcraftServerMemory,
     computer_disk_size       : computeDiskSize,
     host_image               : hostImage,
     internal_ip              : internalIP,
