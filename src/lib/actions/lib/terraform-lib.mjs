@@ -6,7 +6,7 @@ import yaml from 'js-yaml'
 
 import { tryExecAsync } from '@liquid-labs/shell-toolkit'
 
-import { BUILD_DIR, CONFIG_DIR } from './constants'
+import { BUILD_DIR } from './constants'
 
 const varFileName = 'terraform.tfvars.json'
 

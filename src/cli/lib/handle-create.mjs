@@ -10,8 +10,8 @@ const handleCreate = async({ argv }) => {
   const serverType = createOptions['server-type'] // default set in 'create' if undefined
 
   if (name === undefined) {
-    process.stderr.write(`Missing required 'name' in create command.\n\n`)
-    handleHelp({ argv: ['create'] })
+    process.stderr.write('Missing required \'name\' in create command.\n\n')
+    handleHelp({ argv : ['create'] })
     process.exit(1)
   }
   else if (!name.match(/^[a-z][a-z0-9-]*$/)) {
