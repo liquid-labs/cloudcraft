@@ -22,34 +22,14 @@ Use 'cloudcraft help [command]' to get details on command options.`
     ]
   }
   else if (helpCommand === 'create') {
-    const createOptionsSansDefault = structuredClone(createOptionsDef)
-    createOptionsSansDefault.splice(createOptionsSansDefault.findIndex(({ defaultOption }) => defaultOption), 1)
-    sections = [
-      {
-        header  : 'cloudcraft create <options> [name]',
-        content : commands.find(({ name }) => name === 'create').summary
-      },
-      { header : 'Options', optionList : createOptionsSansDefault },
-      {
-        header  : 'Details',
-        content : 'Creates a server named {underline name}. This is, by default, a \'bedrock\' server.'
-      }
-    ]
+    const title = 'cloudcraft create <options> [name]'
+    const details = 'Creates a server named {underline name}. This is, by default, a \'bedrock\' server.'
+    sections = makeSections({ command: 'create', details, options: createOptionsDef, details })
   }
   else if (helpCommand === 'info') {
-    const infoOptionsSansDefault = infoOptionsDef.map((v) => Object.assign({}, v))
-    infoOptionsSansDefault.splice(infoOptionsSansDefault.findIndex(({ defaultOption }) => defaultOption), 1)
-    sections = [
-      {
-        header: 'cloudcraft info [options] [name]',
-        content: commands.find(({ name }) => name === 'info').summary
-      },
-      { header: 'Options', optionList: infoOptionsSansDefault },
-      {
-        header: 'Details',
-        content: 'Displays info about the servers or, if {underline name} supplied, a server. By default will display all information. If one or more info select options is provided, then it will only display that information.'
-      }
-    ]
+    const title = 'cloudcraft info [options] [name]'
+    const details = 'Displays info about the servers or, if {underline name} supplied, a server. By default will display all information. If one or more info select options is provided, then it will only display that information.'
+    sections = makeSections({ command: 'info', details, options: infoOptionsDef, title })
   }
   else if (helpCommand === 'list') {
     sections = [
@@ -63,6 +43,16 @@ Use 'cloudcraft help [command]' to get details on command options.`
 
   const usage = commandLineUsage(sections)
   process.stdout.write(usage + '\n')
+}
+
+const makeSections = ({ command, details, options, title }) => {
+  const optionList = options.map((v) => Object.assign({}, v))
+  optionList.splice(optionList.findIndex(({ defaultOption }) => defaultOption ), 1)
+  return [
+    { header: title, content: commands.find(({ name }) => name === command ).summary },
+    { header: 'Options', optionList },
+    { header: 'Details', content: details }
+  ]
 }
 
 export { handleHelp }
