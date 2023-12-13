@@ -13,8 +13,9 @@ const status = async({ name, noPing = false }) => {
     project: 'cloudcraft-77e89be796ac30dc', 
     zone: 'us-central1-c' 
   })
-  const hostRunning = instanceData.status === 'RUNNING'
-  process.stdout.write(`host running: ${hostRunning}\n`)
+  const hostStatus = instanceData.status
+  const hostRunning = hostStatus === 'RUNNING'
+  process.stdout.write(`host status: ${hostStatus}\n`)
 
   if (hostRunning === true && noPing !== true) {
     // const ip = (await getServerData(name)).ip_address
