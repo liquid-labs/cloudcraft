@@ -45,7 +45,7 @@ This root module creates a Google Project and shared network resources. Machine 
 |------|-------------|------|---------|:--------:|
 | <a name="input_billing_account_id"></a> [billing\_account\_id](#input\_billing\_account\_id) | ID of the billing account to use for the project. | `string` | n/a | yes |
 | <a name="input_network_name"></a> [network\_name](#input\_network\_name) | The name of the network the server resides in. | `string` | `"cloudcraft-network"` | no |
-| <a name="input_org_id"></a> [org\_id](#input\_org\_id) | The name of hosting organization's ID. | `any` | n/a | yes |
+| <a name="input_org_id"></a> [org\_id](#input\_org\_id) | The name of hosting organization's ID. | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | The region where to build the project. | `string` | `"us-central1"` | no |
 | <a name="input_server_type"></a> [server\_type](#input\_server\_type) | Takes 'java' or 'bedrock'. | `string` | `"bedrock"` | no |
 | <a name="input_servers"></a> [servers](#input\_servers) | A map of the server configurations. | <pre>map(<br>  object({<br>    server_memory = optional(string)<br>    data_disk_size = optional(string)<br>    host_image = optional(string)<br>    internal_ip = string<br>    machine_type = optional(string),<br>    server_type = optional(string)<br>  })<br>)</pre> | n/a | yes |
