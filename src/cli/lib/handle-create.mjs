@@ -1,11 +1,12 @@
 import commandLineArgs from 'command-line-args'
 
-import { createOptionsDef, VALID_SERVER_TYPES } from './constants'
+import { cliSpec, VALID_SERVER_TYPES } from './constants'
 import { handleHelp } from './handle-help'
 import { create } from '../../lib/actions'
 
 const handleCreate = async({ argv }) => {
-  const createOptions = commandLineArgs(createOptionsDef, { argv })
+  const createOptionsSpec = cliSpec.commands.find(({ name }) => name === 'create').arguments
+  const createOptions = commandLineArgs(createOptionsSpec, { argv })
   const { name } = createOptions
   const serverType = createOptions['server-type'] // default set in 'create' if undefined
 

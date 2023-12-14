@@ -1,10 +1,11 @@
 import commandLineArgs from 'command-line-args'
 
-import { infoOptionsDef } from './constants'
+import { cliSpec } from './constants'
 import { info } from '../../lib/actions'
 
 const handleInfo = async({ argv }) => {
-  const infoOptions = commandLineArgs(infoOptionsDef, { argv })
+  const infoOptionsSpec = cliSpec.commands.find(({ name }) => name === 'info').arguments
+  const infoOptions = commandLineArgs(infoOptionsSpec, { argv })
   const { name, refresh } = infoOptions
 
   const selectFields = []

@@ -1,6 +1,6 @@
 import commandLineArgs from 'command-line-args'
 
-import { mainOptionsDef } from './lib/constants'
+import { cliSpec } from './lib/constants'
 import { handleCreate } from './lib/handle-create'
 import { handleHelp } from './lib/handle-help'
 import { handleInfo } from './lib/handle-info'
@@ -8,10 +8,11 @@ import { handleList } from './lib/handle-list'
 import { handleStatus } from './lib/handle-status'
 
 const cloudcraft = async() => {
-  const mainOptions = commandLineArgs(mainOptionsDef, { stopAtFirstUnknown : true })
+  const mainOptions = commandLineArgs(cliSpec.mainOptions, { stopAtFirstUnknown : true })
   const argv = mainOptions._unknown || []
 
   const { command } = mainOptions
+  const throwError = mainOptions['throw-error']
 
   try {
     switch (command) {
@@ -32,8 +33,13 @@ const cloudcraft = async() => {
     }
   }
   catch (e) {
-    process.stderr.write(e.message + '\n')
-    process.exit(2)
+    if (throwError === true) {
+      throw e
+    }
+    else {
+      process.stderr.write(e.message + '\n')
+      process.exit(2)
+    }
   }
 }
 
