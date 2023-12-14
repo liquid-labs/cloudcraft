@@ -70,6 +70,7 @@ See [Minecraft Implementation Diary](https://docs.google.com/document/d/1k8WT486
 
 ### Command Reference
 
+<span id="cloudcraft-create"></span>
 #### `cloudcraft create <options> [server-name]`
 
 Creates a server named {underline server-name}. This is, by default, a 'bedrock' server.
@@ -80,10 +81,12 @@ Creates a server named {underline server-name}. This is, by default, a 'bedrock'
 |------|------|
 |`--server-type`|May be one of: bedrock, java|
 
+<span id="cloudcraft-help"></span>
 #### `cloudcraft help <command>`
 
 With no command specified, prints a list of available commands or, when a command is specified, prints help for the specified command.
 
+<span id="cloudcraft-info"></span>
 #### `cloudcraft info <options> <server-name>`
 
 Displays info about the servers or, if {underline name} supplied, a server. By default will display all information. If one or more info select options is provided, then it will only display that information.
@@ -96,10 +99,12 @@ Displays info about the servers or, if {underline name} supplied, a server. By d
 |`--machine-type`|Select the machine type for display.|
 |`--refresh`|Updates underlying terraform files and applies the results before reading the output.|
 
+<span id="cloudcraft-list"></span>
 #### `cloudcraft list`
 
 Lists Cloudcraft managed Minecraft servers.
 
+<span id="cloudcraft-status"></span>
 #### `cloudcraft status <options> <server-name>`
 
 Tries to determine the if the server is up, it's ping status, and disk usage.
