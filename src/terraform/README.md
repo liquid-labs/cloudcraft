@@ -2,7 +2,7 @@
 
 This root module creates a Google Project and shared network resources. Machine instances and their accompanying disks and IP addresses are generated in the [vm-instance module](./modules/vm-instance/README.md)
 
-![Cloudcraft environment diagrame](./cloudcraft-environment-diagram.png)
+![Cloudcraft environment diagrame](./doc-assets/cloudcraft-environment-diagram.png)
 
 ## Requirements
 
