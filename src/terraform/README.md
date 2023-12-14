@@ -1,4 +1,4 @@
-# Cloudcraft Terraform Reference
+# Cloudcraft Terraform Reference : root module
 
 This root module creates a Google Project and shared network resources. Machine instances and their accompanying disks and IP addresses are generated in the [vm-instance module](./modules/vm-instance/README.md)
 
@@ -21,7 +21,7 @@ This root module creates a Google Project and shared network resources. Machine 
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_vm_instance"></a> [vm\_instance](#module\_vm\_instance) | ./modules/vm-instance | n/a |
+| <a name="module_vm_instance"></a> [vm\_instance](./modules/vm-instance/README.md) | ./modules/vm-instance | n/a |
 
 ## Resources
 
