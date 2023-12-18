@@ -52,7 +52,7 @@ export const cliSpec = {
       summary : 'Displays the status of a Minecraft server.',
       description: "Tries to determine the if the server is up, it's ping status, and disk usage.",
       arguments : [
-        { name : 'server-name', defaultOption : true, description : 'The name of the server to describe.' },
+        { name : 'server-name', defaultOption : true, requried: true, description : 'The name of the server to describe.' },
         { name : 'no-ping', type: Boolean, description : 'Skips the ping test when set.'}
       ]
     }

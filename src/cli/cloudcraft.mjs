@@ -7,6 +7,8 @@ import { handleInfo } from './lib/handle-info'
 import { handleList } from './lib/handle-list'
 import { handleStatus } from './lib/handle-status'
 
+import { commandLineDocumentation } from 'command-line-documentation'
+
 const cloudcraft = async() => {
   const mainOptions = commandLineArgs(cliSpec.mainOptions, { stopAtFirstUnknown : true })
   const argv = mainOptions._unknown || []
@@ -18,6 +20,9 @@ const cloudcraft = async() => {
     switch (command) {
     case 'create':
       handleCreate({ argv }); break
+    case 'document':
+      console.log(commandLineDocumentation({ cliSpec, mainCommand: 'cloudcraft', sectionDepth: 2, title: 'Command reference' }))
+      break
     case 'help':
     case undefined:
       handleHelp({ argv }); break
