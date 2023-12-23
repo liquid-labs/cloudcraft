@@ -1,19 +1,9 @@
-import { find } from 'find-plus'
 import yaml from 'js-yaml'
 
-import { BACKUP_DIR } from '../../constants'
+import { getBackupFiles } from './lib/get-backup-files'
 
 const backupsList = async({ format }) => {
-  const isATar = (file) => file.name.endsWith('.tar.gz')
-  const backupFiles = await find({ onlyFiles: true, root: BACKUP_DIR, test: isATar })
-  const backupFileRE = /([^/]+)\/([^/]+\.([0-9-]+)\.tar\.gz)$/
-  const backupEntries = backupFiles.map((filePath) => {
-    const match = filePath.match(backupFileRE)
-    const [,serverName, fileName, timestamp] = match
-    return { fileName, filePath, serverName, timestamp }
-  })
-
-  backupEntries.sort((a, b) => a.fileName.localeCompare(b.fileName))
+  const backupEntries = await getBackupFiles()
 
   if (format === 'json') {
     process.stdout.write(JSON.stringify(backupEntries) + '\n')

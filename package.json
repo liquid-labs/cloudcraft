@@ -20,7 +20,11 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": ["minecraft", "cloud", "cli"],
+  "keywords": [
+    "minecraft",
+    "cloud",
+    "cli"
+  ],
   "author": "Zane Rockenbaugh <zane@liquid-labs.com>",
   "license": "Apache-2.0",
   "repository": {

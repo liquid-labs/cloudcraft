@@ -2,6 +2,7 @@ import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from './constants'
 import { handleBackupsCreate } from './backups/handle-backups-create'
+import { handleBackupsDelete } from './backups/handle-backups-delete'
 import { handleBackupsList } from './backups/handle-backups-list'
 
 const handleBackups = async({ argv }) => {
@@ -14,6 +15,8 @@ const handleBackups = async({ argv }) => {
   switch (command) {
   case 'create':
     handleBackupsCreate({ argv, backupsCLISpec }); break
+  case 'delete':
+    handleBackupsDelete({ argv, backupsCLISpec }); break
   case 'list':
     handleBackupsList({ argv, backupsCLISpec }); break
   default:

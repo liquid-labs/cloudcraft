@@ -32,6 +32,19 @@ export const cliSpec = {
           ]
         },
         {
+          name: 'delete',
+          summary: 'Deletes the named or chosen backups.',
+          description: 'Deletes the specified backup file(s) or, if none specified, asks the user to choose one or more files for deletion.',
+          arguments: [
+            { 
+              name: 'backup-files',
+              description: 'The backup file(s) to delete.',
+              defaultOption: true,
+              multiple: true
+            }
+          ]
+        },
+        {
           name: 'list',
           summary: 'Lists the current backups.',
           arguments: [
