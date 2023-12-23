@@ -54,7 +54,14 @@ See [Minecraft Implementation Diary](https://docs.google.com/document/d/1k8WT486
 
 `cloudcraft <options> <command>`
 
-### Command summary
+### Main options
+
+|Option|Description|
+|------|------|
+|`<command>`|(_main argument_,_optional_) undefined|
+|`--throw-error`|In the case of an exception, the default is to print the message. When --throw-error is set, the exception is left uncaught.|
+
+### Commands
 
 - [`create`](#cloudcraft-create): Creates (sets up) a cloud-based Minecraft server managed by Cloudcraft.
 - [`help`](#cloudcraft-help): With no command specified, prints a list of available commands or, when a command is specified, prints help for the specified command.
@@ -65,14 +72,6 @@ See [Minecraft Implementation Diary](https://docs.google.com/document/d/1k8WT486
 - [`status`](#cloudcraft-status): Displays the status of a Minecraft server.
 - [`stop`](#cloudcraft-stop): Stops the named Minecraft server.
 
-### Main options
-
-|Option|Description|
-|------|------|
-|`--throw-error`|In the case of an exception, the default is to print the message. When --throw-error is set, the exception is left uncaught.|
-
-### Commands
-
 <span id="cloudcraft-create"></span>
 #### `cloudcraft create <options> [server-name]`
 
@@ -82,12 +81,19 @@ Creates a server named _server-name_. This is, by default, a 'bedrock' server.
 
 |Option|Description|
 |------|------|
+|`[server-name]`|(_main argument_,_required_) The name of the server to create.|
 |`--server-type`|May be one of: bedrock, java|
 
 <span id="cloudcraft-help"></span>
 #### `cloudcraft help <command>`
 
 With no command specified, prints a list of available commands or, when a command is specified, prints help for the specified command.
+
+##### `help` options
+
+|Option|Description|
+|------|------|
+|`<command>`|(_main argument_,_optional_) The command to print help for.|
 
 <span id="cloudcraft-info"></span>
 #### `cloudcraft info <options> <server-name>`
@@ -98,6 +104,7 @@ Displays info about the servers or, if _name_ supplied, a server. By default wil
 
 |Option|Description|
 |------|------|
+|`<server-name>`|(_main argument_,_optional_) The name of the server to get into on.|
 |`--ip-address`|Select the public IP address for display.|
 |`--machine-type`|Select the machine type for display.|
 |`--refresh`|Updates underlying terraform files and applies the results before reading the output.|
@@ -121,6 +128,7 @@ You can also use the `--command` option to execute a single command.
 
 |Option|Description|
 |------|------|
+|`[server-name]`|(_main argument_,_required_) The name of the server to log into.|
 |`--command`|Will run the specified command and exit.|
 |`--eval-mode`|Produces output suitable to 'eval $(cloudcraft ssh a-server)'.|
 
@@ -133,6 +141,7 @@ Starts the named Minecraft server.
 
 |Option|Description|
 |------|------|
+|`[server-name]`|(_main argument_,_required_) The name of the server to start.|
 |`--refresh`|Updates and applies the terraform configuration before starting the server.|
 
 <span id="cloudcraft-status"></span>
@@ -144,6 +153,7 @@ Tries to determine the if the server is up, it's ping status, and disk usage.
 
 |Option|Description|
 |------|------|
+|`<server-name>`|(_main argument_,_optional_) The name of the server to describe.|
 |`--no-ping`|Skips the ping test when set.|
 |`--refresh`|Updates and applies the terraform configuration before resolving the server status.|
 
@@ -156,6 +166,7 @@ Stops the named Minecraft server.
 
 |Option|Description|
 |------|------|
+|`[server-name]`|(_main argument_,_required_) The name of the server to stop.|
 |`--refresh`|Updates and applies the terraform configuration before stoping the server.|
 
 

@@ -24,7 +24,7 @@ const cloudcraft = async() => {
     case 'create':
       handleCreate({ argv }); break
     case 'document':
-      console.log(commandLineDocumentation({ cliSpec, mainCommand : 'cloudcraft', sectionDepth : 2, title : 'Command reference' }))
+      console.log(commandLineDocumentation(cliSpec, { sectionDepth : 2, title : 'Command reference' }))
       break
     case 'help':
     case undefined:

@@ -1,6 +1,7 @@
 export const VALID_SERVER_TYPES = ['bedrock', 'java']
 
 export const cliSpec = {
+  mainCommand : 'cloudcraft',
   mainOptions : [
     { name : 'command', defaultOption : true },
     {
