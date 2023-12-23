@@ -17,7 +17,7 @@ export const cliSpec = {
       arguments: [
         { name: 'command', defaultOption: true, required: true, description: 'The backup action to perform.' }
       ],
-      subCommands: [
+      commands: [
         { 
           name: 'create',
           summary: 'Backs up the named server.',
