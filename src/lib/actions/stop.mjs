@@ -2,8 +2,8 @@ import { InstancesClient } from '@google-cloud/compute'
 
 import { deployTerraform, getProjectData, stageTerraformFiles } from './lib/terraform-lib'
 
-const start = async({ name, noPing = false, refresh }) => {
-  process.stdout.write(`Starting '${name}'...\n`)
+const stop = async({ name, noPing = false, refresh }) => {
+  process.stdout.write(`Stopping '${name}'...\n`)
 
   if (refresh === true) {
     await stageTerraformFiles()
@@ -12,7 +12,7 @@ const start = async({ name, noPing = false, refresh }) => {
 
   const projectData = await getProjectData()
   const instancesClient = new InstancesClient()
-  const [ioOperation] = await instancesClient.start({
+  const [ioOperation] = await instancesClient.stop({
     instance : `cloudcraft-host-${name}`,
     project  : projectData.project_id.value,
     zone     : projectData.zone.value
@@ -21,19 +21,19 @@ const start = async({ name, noPing = false, refresh }) => {
   const { done, latestResponse } = ioOperation
 
   if (done === true) {
-    process.stdout.write('Server started.')
+    process.stdout.write('Server stopped.')
   }
   else {
     const { warnings } = latestResponse
     if (warnings && warnings.length > 0) {
-      process.stdout.write('Server started with warnings:\n')
+      process.stdout.write('Server stopping with warnings:\n')
       for (const warning of warnings) {
         process.stdout.write('- ' + warning + '\n')
       }
     }
 
-    process.stdout.write(`Server is starting. Try:\n\ncloudcraft status ${name}\n\nto get current status.\n`)
+    process.stdout.write(`Server is stopping. Try:\n\ncloudcraft status ${name}\n\nto get current status.\n`)
   }
 }
 
-export { start }
+export { stop }

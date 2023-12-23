@@ -72,6 +72,18 @@ export const cliSpec = {
           type        : Boolean
         }
       ]
-    }
+    },
+    {
+      name      : 'stop',
+      summary   : 'Stops the named Minecraft server.',
+      arguments : [
+        { name : 'server-name', defaultOption : true, required : true, description : 'The name of the server to stop.' },
+        {
+          name        : 'refresh',
+          description : 'Updates and applies the terraform configuration before stoping the server.',
+          type        : Boolean
+        }
+      ]
+    },
   ]
 }
