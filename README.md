@@ -60,7 +60,10 @@ See [Minecraft Implementation Diary](https://docs.google.com/document/d/1k8WT486
 - [`help`](#cloudcraft-help): With no command specified, prints a list of available commands or, when a command is specified, prints help for the specified command.
 - [`info`](#cloudcraft-info): Prints info about the Minecraft server(s).
 - [`list`](#cloudcraft-list): Lists Cloudcraft managed Minecraft servers.
+- [`ssh`](#cloudcraft-ssh): Displays the proper SSH command or executes specified command on remote server.
+- [`start`](#cloudcraft-start): Starts the named Minecraft server.
 - [`status`](#cloudcraft-status): Displays the status of a Minecraft server.
+- [`stop`](#cloudcraft-stop): Stops the named Minecraft server.
 
 ### Main options
 
@@ -68,12 +71,12 @@ See [Minecraft Implementation Diary](https://docs.google.com/document/d/1k8WT486
 |------|------|
 |`--throw-error`|In the case of an exception, the default is to print the message. When --throw-error is set, the exception is left uncaught.|
 
-### Command Reference
+### Commands
 
 <span id="cloudcraft-create"></span>
 #### `cloudcraft create <options> [server-name]`
 
-Creates a server named {underline server-name}. This is, by default, a 'bedrock' server.
+Creates a server named _server-name_. This is, by default, a 'bedrock' server.
 
 ##### `create` options
 
@@ -89,7 +92,7 @@ With no command specified, prints a list of available commands or, when a comman
 <span id="cloudcraft-info"></span>
 #### `cloudcraft info <options> <server-name>`
 
-Displays info about the servers or, if {underline name} supplied, a server. By default will display all information. If one or more info select options is provided, then it will only display that information.
+Displays info about the servers or, if _name_ supplied, a server. By default will display all information. If one or more info select options is provided, then it will only display that information.
 
 ##### `info` options
 
@@ -104,6 +107,34 @@ Displays info about the servers or, if {underline name} supplied, a server. By d
 
 Lists Cloudcraft managed Minecraft servers.
 
+<span id="cloudcraft-ssh"></span>
+#### `cloudcraft ssh <options> [server-name]`
+
+The 'ssh', with no options, command is used to generate and display the SSH command you would use to log into the specified server. With '--eval-mode', you can do:
+```
+eval $(cloudcraft ssh --eval-mode some-sever
+'''
+You can also use the `--command` option to execute a single command.
+
+
+##### `ssh` options
+
+|Option|Description|
+|------|------|
+|`--command`|Will run the specified command and exit.|
+|`--eval-mode`|Produces output suitable to 'eval $(cloudcraft ssh a-server)'.|
+
+<span id="cloudcraft-start"></span>
+#### `cloudcraft start <options> [server-name]`
+
+Starts the named Minecraft server.
+
+##### `start` options
+
+|Option|Description|
+|------|------|
+|`--refresh`|Updates and applies the terraform configuration before starting the server.|
+
 <span id="cloudcraft-status"></span>
 #### `cloudcraft status <options> <server-name>`
 
@@ -114,6 +145,18 @@ Tries to determine the if the server is up, it's ping status, and disk usage.
 |Option|Description|
 |------|------|
 |`--no-ping`|Skips the ping test when set.|
+|`--refresh`|Updates and applies the terraform configuration before resolving the server status.|
+
+<span id="cloudcraft-stop"></span>
+#### `cloudcraft stop <options> [server-name]`
+
+Stops the named Minecraft server.
+
+##### `stop` options
+
+|Option|Description|
+|------|------|
+|`--refresh`|Updates and applies the terraform configuration before stoping the server.|
 
 
 

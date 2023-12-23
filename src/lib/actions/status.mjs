@@ -14,12 +14,11 @@ const status = async({ name, noPing = false, refresh }) => {
   }
 
   const projectData = await getProjectData()
-  const instancesClient = new InstancesClient()
-
   const instance = `cloudcraft-host-${name}`
   const project = projectData.project_id.value
   const zone = projectData.zone.value
 
+  const instancesClient = new InstancesClient()
   const [instanceData] = await instancesClient.get({
     instance,
     project,

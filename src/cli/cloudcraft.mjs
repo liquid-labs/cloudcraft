@@ -5,6 +5,7 @@ import { handleCreate } from './lib/handle-create'
 import { handleHelp } from './lib/handle-help'
 import { handleInfo } from './lib/handle-info'
 import { handleList } from './lib/handle-list'
+import { handleSSH } from './lib/handle-ssh'
 import { handleStart } from './lib/handle-start'
 import { handleStatus } from './lib/handle-status'
 import { handleStop } from './lib/handle-stop'
@@ -32,6 +33,8 @@ const cloudcraft = async() => {
       handleInfo({ argv }); break
     case 'list':
       handleList({ argv }); break
+    case 'ssh':
+      handleSSH({ argv }); break
     case 'start':
       handleStart({ argv }); break
     case 'status':

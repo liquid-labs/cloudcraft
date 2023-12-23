@@ -47,6 +47,30 @@ export const cliSpec = {
       ]
     },
     { name : 'list', summary : 'Lists Cloudcraft managed Minecraft servers.' },
+    { 
+      name: 'ssh', 
+      summary: 'Displays the proper SSH command or executes specified command on remote server.',
+      description: `The 'ssh' command, with no options, is used to generate and display the SSH command you would use to log into the specified server. With '--eval-mode', you can do:
+\`\`\`
+eval $(cloudcraft ssh --eval-mode some-sever
+\'\'\'
+You can also use the \`--command\` option to execute a single command.
+`,
+      arguments: [
+        { 
+          name: 'server-name', 
+          defaultOption: true, 
+          required: true, 
+          description: 'The name of the server to log into.' 
+        },
+        { name: 'command', description: 'Will run the specified command and exit.' },
+        { 
+          name: 'eval-mode', 
+          description: "Produces output suitable to 'eval $(cloudcraft ssh a-server)'.", 
+          type: Boolean 
+        }
+      ]
+    },
     {
       name      : 'start',
       summary   : 'Starts the named Minecraft server.',
