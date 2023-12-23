@@ -17,7 +17,7 @@ export const cliSpec = {
       arguments: [
         { name: 'command', defaultOption: true, required: true, description: 'The backup action to perform.' }
       ],
-      subcommands: [
+      subCommands: [
         { 
           name: 'create',
           summary: 'Backs up the named server.',
@@ -28,6 +28,17 @@ export const cliSpec = {
               description: 'Name of the server to backup.',
               defaultOption: true,
               required: true
+            }
+          ]
+        },
+        {
+          name: 'list',
+          summary: 'Lists the current backups.',
+          arguments: [
+            { 
+              name: 'format',
+              description: "Specifies the format of the output. Can be 'terminal' (default), 'json', or 'yaml'.",
+              default: 'terminal'
             }
           ]
         }

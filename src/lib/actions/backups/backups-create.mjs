@@ -3,6 +3,7 @@ import * as fsPath from 'node:path'
 
 import { tryExecAsync } from '@liquid-labs/shell-toolkit'
 
+import { BACKUP_DIR } from '../../constants'
 import { getProjectData } from '../lib/terraform-lib'
 
 const backupsCreate = async ({ name }) => {
@@ -33,7 +34,7 @@ const backupsCreate = async ({ name }) => {
     throw new Error('There was an error creating the tar file: ' + e.message)
   }
 
-  const targetDir = fsPath.join(process.env.HOME, '.local', 'share', 'cloudcraft', name)
+  const targetDir = fsPath.join(BACKUP_DIR, name)
   await fs.mkdir(targetDir, { recursive: true })
 
 
