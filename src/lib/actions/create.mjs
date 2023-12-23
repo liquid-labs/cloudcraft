@@ -48,12 +48,12 @@ const create = async({
   const internalIP = ipGuess
 
   servers[name] = {
-    server_memory : cloudcraftServerMemory,
-    computer_disk_size       : computeDiskSize,
-    host_image               : hostImage,
-    internal_ip              : internalIP,
-    machine_type             : machineType,
-    server_type              : serverType
+    server_memory      : cloudcraftServerMemory,
+    computer_disk_size : computeDiskSize,
+    host_image         : hostImage,
+    internal_ip        : internalIP,
+    machine_type       : machineType,
+    server_type        : serverType
   }
 
   config.servers = servers

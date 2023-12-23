@@ -1,15 +1,12 @@
 import yaml from 'js-yaml'
 import pick from 'lodash/pick'
 
-import { tryExecAsync } from '@liquid-labs/shell-toolkit'
-
-import { BUILD_DIR } from './lib/constants'
 import { deployTerraform, getServersData, stageTerraformFiles } from './lib/terraform-lib'
 
 const info = async({ name, refresh, selectFields }) => {
   if (refresh === true) {
-    stageTerraformFiles()
-    deployTerraform()
+    await stageTerraformFiles()
+    await deployTerraform()
   }
 
   const serversData = await getServersData()

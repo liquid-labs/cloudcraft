@@ -3,15 +3,27 @@ import ping from 'ping'
 import { InstancesClient } from '@google-cloud/compute'
 import { tryExecAsync } from '@liquid-labs/shell-toolkit'
 
-import { getServerData } from './lib/terraform-lib'
+import { deployTerraform, getProjectData, stageTerraformFiles } from './lib/terraform-lib'
 
-const status = async({ name, noPing = false }) => {
+const status = async({ name, noPing = false, refresh }) => {
   process.stdout.write(name)
+
+  if (refresh === true) {
+    await stageTerraformFiles()
+    await deployTerraform()
+  }
+
+  const projectData = await getProjectData()
   const instancesClient = new InstancesClient()
-  const [instanceData] = await instancesClient.get({ 
-    instance: 'cloudcraft-host-third-world', 
-    project: 'cloudcraft-77e89be796ac30dc', 
-    zone: 'us-central1-c' 
+
+  const instance = `cloudcraft-host-${name}`
+  const project = projectData.project_id.value
+  const zone = projectData.zone.value
+
+  const [instanceData] = await instancesClient.get({
+    instance,
+    project,
+    zone  
   })
   const hostStatus = instanceData.status
   const hostRunning = hostStatus === 'RUNNING'
@@ -19,9 +31,9 @@ const status = async({ name, noPing = false }) => {
 
   if (hostRunning === true && noPing !== true) {
     // const ip = (await getServerData(name)).ip_address
-    const res = await getServerData(name)
-    const ip = res.ip_address
-    let pingResult = await ping.promise.probe(ip, { min_reply: 6 })
+    const serverData = projectData.servers.value[name]
+    const ip = serverData.ip_address
+    const pingResult = await ping.promise.probe(ip, { min_reply : 6 })
     const { avg } = pingResult
     let rating
     if (avg < 25) {
@@ -47,13 +59,17 @@ const status = async({ name, noPing = false }) => {
     }
     process.stdout.write(`avg ping: ${avg}ms (${rating})\n`)
   }
-  
+
   if (hostRunning === true) {
-    const dfReport = (await tryExecAsync(`gcloud compute ssh cloudcraft-host-third-world --zone=us-central1-c --project=cloudcraft-77e89be796ac30dc --command='sudo bash -c "cd /var/lib/docker/cloudcraft && df -h" | grep cloudcraft'`)).stdout
+    try {
+      const dfReport = (await tryExecAsync(`gcloud compute ssh ${instance} --zone=${zone} --project=${project} --command='sudo bash -c "cd /var/lib/docker/cloudcraft && df -h" | grep cloudcraft'`)).stdout
 
-    const [,available,used/*,free*/] = dfReport.split(/ +/)
-
-    process.stdout.write(`disk usage: ${used}/${available}\n`)
+      const [, available, used/*, free */] = dfReport.split(/ +/)
+      process.stdout.write(`disk usage: ${used}/${available}\n`)
+    }
+    catch (e) {
+      process.stderr.write('Could not determine disk usage:\n' + e.message)
+    }
   }
 }
 

@@ -5,6 +5,7 @@ import { handleCreate } from './lib/handle-create'
 import { handleHelp } from './lib/handle-help'
 import { handleInfo } from './lib/handle-info'
 import { handleList } from './lib/handle-list'
+import { handleStart } from './lib/handle-start'
 import { handleStatus } from './lib/handle-status'
 
 import { commandLineDocumentation } from 'command-line-documentation'
@@ -21,7 +22,7 @@ const cloudcraft = async() => {
     case 'create':
       handleCreate({ argv }); break
     case 'document':
-      console.log(commandLineDocumentation({ cliSpec, mainCommand: 'cloudcraft', sectionDepth: 2, title: 'Command reference' }))
+      console.log(commandLineDocumentation({ cliSpec, mainCommand : 'cloudcraft', sectionDepth : 2, title : 'Command reference' }))
       break
     case 'help':
     case undefined:
@@ -30,6 +31,8 @@ const cloudcraft = async() => {
       handleInfo({ argv }); break
     case 'list':
       handleList({ argv }); break
+    case 'start':
+      handleStart({ argv }); break
     case 'status':
       handleStatus({ argv }); break
     default:

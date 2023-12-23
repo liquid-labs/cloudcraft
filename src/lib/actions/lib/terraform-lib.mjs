@@ -18,6 +18,13 @@ const deployTerraform = async() => {
   )
 }
 
+const getProjectData = async() => {
+  const jsonContent = (await tryExecAsync(`cd '${BUILD_DIR}' && terraform output -json`)).stdout
+  const data = JSON.parse(jsonContent)
+
+  return data
+}
+
 const getServerData = async(name) => {
   const serversData = await getServersData()
 
@@ -25,8 +32,7 @@ const getServerData = async(name) => {
 }
 
 const getServersData = async() => {
-  const jsonContent = (await tryExecAsync(`cd '${BUILD_DIR}' && terraform output -json`)).stdout
-  const data = JSON.parse(jsonContent)
+  const data = await getProjectData()
   const serversData = data.servers.value
 
   return serversData
@@ -73,4 +79,4 @@ const stageTerraformVars = async({ billingAccountName, organizationName/*, proje
   await fs.writeFile(varsPath, varsContent)
 }
 
-export { deployTerraform, getServerData, getServersData, stageTerraformFiles, stageTerraformVars }
+export { deployTerraform, getProjectData, getServerData, getServersData, stageTerraformFiles, stageTerraformVars }

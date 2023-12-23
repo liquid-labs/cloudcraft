@@ -5,11 +5,12 @@ import { status } from '../../lib/actions'
 
 const handleStatus = async({ argv }) => {
   const statusOptionsSpec = cliSpec.commands.find(({ name }) => name === 'status').arguments
-  const statusOptions = commandLineArgs(statusOptionsDef, { argv })
-  const { name } = statusOptions
+  const statusOptions = commandLineArgs(statusOptionsSpec, { argv })
+  const name = statusOptions['server-name']
   const noPing = statusOptions['no-ping']
+  const { refresh } = statusOptions
 
-  await status({ name, noPing })
+  await status({ name, noPing, refresh })
 }
 
 export { handleStatus }

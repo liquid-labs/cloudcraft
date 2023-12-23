@@ -15,25 +15,25 @@ const handleHelp = ({ argv }) => {
 
 Use 'cloudcraft help [command]' to get details on command options.`
       },
-      { header  : 'Commands', content : cliSpec.commands.map(({ name, summary }) => ({ name, summary })) }
+      { header : 'Commands', content : cliSpec.commands.map(({ name, summary }) => ({ name, summary })) }
     ]
   }
   else if (helpCommand === 'create') {
     const title = 'cloudcraft create <options> [name]'
-    sections = makeSections({ command: 'create', title })
+    sections = makeSections({ command : 'create', title })
   }
   else if (helpCommand === 'info') {
     const title = 'cloudcraft info [options] [name]'
-    sections = makeSections({ command: 'info', title })
+    sections = makeSections({ command : 'info', title })
   }
   else if (helpCommand === 'list') {
     sections = [
-      { header : 'cloudcraft list', content: cliSpec.commands.find(({ name }) => name === 'list').summary }
+      { header : 'cloudcraft list', content : cliSpec.commands.find(({ name }) => name === 'list').summary }
     ]
   }
   else if (helpCommand === 'status') {
-    const title = 'cloudcraft status [name]',
-    sections = makeSections({ command: 'status', title })
+    const title = 'cloudcraft status [name]'
+    sections = makeSections({ command : 'status', title })
   }
   else {
     process.stderr.write(`Cannot provide help on unknown command '${helpCommand}'.`)
@@ -49,11 +49,11 @@ const makeSections = ({ command, title }) => {
   const details = commandSpec.description
   const options = commandSpec.arguments
   const optionList = options.map((v) => Object.assign({}, v))
-  optionList.splice(optionList.findIndex(({ defaultOption }) => defaultOption ), 1)
+  optionList.splice(optionList.findIndex(({ defaultOption }) => defaultOption), 1)
   return [
-    { header: title, content: cliSpec.commands.find(({ name }) => name === command ).summary },
-    { header: 'Options', optionList },
-    { header: 'Details', content: details }
+    { header : title, content : cliSpec.commands.find(({ name }) => name === command).summary },
+    { header : 'Options', optionList },
+    { header : 'Details', content : details }
   ]
 }
 
