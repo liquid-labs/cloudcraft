@@ -2,7 +2,7 @@ import { InstancesClient } from '@google-cloud/compute'
 
 import { deployTerraform, getProjectData, stageTerraformFiles } from './lib/terraform-lib'
 
-const start = async({ name, noPing = false, refresh }) => {
+const start = async({ name, refresh }) => {
   process.stdout.write(`Starting '${name}'...\n`)
 
   if (refresh === true) {

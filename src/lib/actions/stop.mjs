@@ -2,7 +2,7 @@ import { InstancesClient } from '@google-cloud/compute'
 
 import { deployTerraform, getProjectData, stageTerraformFiles } from './lib/terraform-lib'
 
-const stop = async({ name, noPing = false, refresh }) => {
+const stop = async({ name, refresh }) => {
   process.stdout.write(`Stopping '${name}'...\n`)
 
   if (refresh === true) {
