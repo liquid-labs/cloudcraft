@@ -4,6 +4,7 @@ import { cliSpec } from './constants'
 import { handleBackupsCreate } from './backups/handle-backups-create'
 import { handleBackupsDelete } from './backups/handle-backups-delete'
 import { handleBackupsList } from './backups/handle-backups-list'
+import { handleBackupsRestore } from './backups/handle-backups-restore'
 
 const handleBackups = async({ argv }) => {
   const backupsCLISpec = cliSpec.commands.find(({ name }) => name === 'backups')
@@ -19,6 +20,8 @@ const handleBackups = async({ argv }) => {
     handleBackupsDelete({ argv, backupsCLISpec }); break
   case 'list':
     handleBackupsList({ argv, backupsCLISpec }); break
+  case 'restore':
+    handleBackupsRestore({ argv, backupsCLISpec }); break
   default:
     throw new Error('Unknown backup command: ' + command)
   }

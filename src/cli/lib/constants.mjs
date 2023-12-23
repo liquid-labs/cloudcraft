@@ -54,6 +54,22 @@ export const cliSpec = {
               default: 'terminal'
             }
           ]
+        },
+        {
+          name: 'restore',
+          summary: 'Restores the named or chosen backup.',
+          description: "Restores the specified backup or, if none specified, asks the user to choose a backup to restore. By default, the backup will be restored to the server from which it originated. This can be changed with the '--target' option.",
+          arguments: [
+            { 
+              name: 'backup-file',
+              description: 'The backup file to restore.',
+              defaultOption: true
+            },
+            {
+              name: 'target',
+              description: 'The server to restore the backup to.'
+            }
+          ]
         }
       ]
     },
