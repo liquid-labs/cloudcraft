@@ -12,12 +12,17 @@
     "preversion": "npm test && make lint",
     "qa": "make qa"
   },
+  "files": [
+    "./dist",
+    "README.md",
+    "LICENSE.md"
+  ],
   "engines": {
     "node": ">=18.0.0"
   },
   "keywords": [],
   "author": "Zane Rockenbaugh <zane@liquid-labs.com>",
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/Liquid-Labs/cloudcraft.git"
