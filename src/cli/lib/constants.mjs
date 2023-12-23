@@ -13,10 +13,24 @@ export const cliSpec = {
   commands : [
     { 
       name: 'backups',
-      summary: 'Backs up the named server.',
-      description: 'Zips the remote server files and copies them to the cloudcraft data directory.',
+      summary: 'Selects backup commands.',
       arguments: [
-        { name: 'server-name', defaultOption: true, required: true, description: 'The name of the server to backup.' }
+        { name: 'command', defaultOption: true, required: true, description: 'The backup action to perform.' }
+      ],
+      subcommands: [
+        { 
+          name: 'create',
+          summary: 'Backs up the named server.',
+          description: 'Zips the remote server files and copies them to the cloudcraft data directory.',
+          arguments: [
+            {
+              name: 'server-name',
+              description: 'Name of the server to backup.',
+              defaultOption: true,
+              required: true
+            }
+          ]
+        }
       ]
     },
     {

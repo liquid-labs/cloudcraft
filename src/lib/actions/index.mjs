@@ -1,4 +1,5 @@
-export * from './backup'
+export * from './backups'
+
 export * from './create'
 export * from './info'
 export * from './list'

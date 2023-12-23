@@ -3,9 +3,9 @@ import * as fsPath from 'node:path'
 
 import { tryExecAsync } from '@liquid-labs/shell-toolkit'
 
-import { getProjectData } from './lib/terraform-lib'
+import { getProjectData } from '../lib/terraform-lib'
 
-const backup = async ({ name }) => {
+const backupsCreate = async ({ name }) => {
   process.stdout.write('Starting backup...\n')
 
   const projectData = await getProjectData()
@@ -57,4 +57,4 @@ const backup = async ({ name }) => {
   }
 }
 
-export { backup }
+export { backupsCreate }

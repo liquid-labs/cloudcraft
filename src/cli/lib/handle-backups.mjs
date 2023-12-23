@@ -1,14 +1,21 @@
 import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from './constants'
-import { backup } from '../../lib/actions'
+import { handleBackupsCreate } from './backups/handle-backups-create'
 
 const handleBackups = async({ argv }) => {
-  const backupOptionsSpec = cliSpec.commands.find(({ name }) => name === 'backups').arguments
-  const backupOptions = commandLineArgs(backupOptionsSpec, { argv })
-  const name = backupOptions['server-name']
+  const backupsCLISpec = cliSpec.commands.find(({ name }) => name === 'backups')
+  const backupOptionsSpec = backupsCLISpec.arguments
+  const backupOptions = commandLineArgs(backupOptionsSpec, { argv, stopAtFirstUnknown: true })
+  const { command } = backupOptions
+  argv = backupOptions._unknown || []
 
-  await backup({ name })
+  switch (command) {
+  case 'create':
+    handleBackupsCreate({ argv, backupsCLISpec }); break
+  default:
+    throw new Error('Unknown backup command: ' + command)
+  }
 }
 
 export { handleBackups }
