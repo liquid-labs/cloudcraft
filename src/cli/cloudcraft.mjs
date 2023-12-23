@@ -1,6 +1,7 @@
 import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from './lib/constants'
+import { handleBackups } from './lib/handle-backups'
 import { handleCreate } from './lib/handle-create'
 import { handleHelp } from './lib/handle-help'
 import { handleInfo } from './lib/handle-info'
@@ -21,6 +22,8 @@ const cloudcraft = async() => {
 
   try {
     switch (command) {
+    case 'backups':
+      handleBackups({ argv }); break
     case 'create':
       handleCreate({ argv }); break
     case 'document':

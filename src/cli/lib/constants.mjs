@@ -11,6 +11,14 @@ export const cliSpec = {
     }
   ],
   commands : [
+    { 
+      name: 'backups',
+      summary: 'Backs up the named server.',
+      description: 'Zips the remote server files and copies them to the cloudcraft data directory.',
+      arguments: [
+        { name: 'server-name', defaultOption: true, required: true, description: 'The name of the server to backup.' }
+      ]
+    },
     {
       name        : 'create',
       summary     : 'Creates (sets up) a cloud-based Minecraft server managed by Cloudcraft.',
@@ -89,7 +97,7 @@ You can also use the \`--command\` option to execute a single command.
       summary     : 'Displays the status of a Minecraft server.',
       description : "Tries to determine the if the server is up, it's ping status, and disk usage.",
       arguments   : [
-        { name : 'server-name', defaultOption : true, requried : true, description : 'The name of the server to describe.' },
+        { name : 'server-name', defaultOption : true, required : true, description : 'The name of the server to describe.' },
         { name : 'no-ping', type : Boolean, description : 'Skips the ping test when set.' },
         {
           name        : 'refresh',

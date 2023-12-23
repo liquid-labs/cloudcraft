@@ -54,12 +54,17 @@ resource:
       metadata_startup_script: |
         {
           echo "Starting at $(date)"
-          mkdir -p ${local.host_bind_dir.value}
-          mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard \
-            /dev/disk/by-id/google-${google_compute_disk.cloudcraft_data_disk.name}
-          mount -o discard,defaults \
-            /dev/disk/by-id/google-${google_compute_disk.cloudcraft_data_disk.name} \
-            ${local.host_bind_dir.value}
+          if ! [ -d ${local.host.bind_dir.value} ]; then
+            mkdir -p ${local.host_bind_dir.value}
+            mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard \
+              /dev/disk/by-id/google-${google_compute_disk.cloudcraft_data_disk.name}
+            mount -o discard,defaults \
+              /dev/disk/by-id/google-${google_compute_disk.cloudcraft_data_disk.name} \
+              ${local.host_bind_dir.value}
+          fi
+          chmod a+r /var/lib/docker
+          chmod a+x /var/lib/docker
+          chmod a+r /var/lib/cloudcraft
  
           echo "
         # credit to https://www.redhat.com/sysadmin/systemd-automate-recovery
