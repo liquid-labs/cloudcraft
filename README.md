@@ -110,10 +110,10 @@ Lists Cloudcraft managed Minecraft servers.
 <span id="cloudcraft-ssh"></span>
 #### `cloudcraft ssh <options> [server-name]`
 
-The 'ssh', with no options, command is used to generate and display the SSH command you would use to log into the specified server. With '--eval-mode', you can do:
+The 'ssh' command, with no options, is used to generate and display the SSH command you would use to log into the specified server. With '--eval-mode', you can do:
 ```
 eval $(cloudcraft ssh --eval-mode some-sever
-'''
+```
 You can also use the `--command` option to execute a single command.
 
 
