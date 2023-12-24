@@ -6,7 +6,7 @@ import { tryExecAsync } from '@liquid-labs/shell-toolkit'
 import { BACKUP_DIR } from '../../constants'
 import { getProjectData } from '../lib/terraform-lib'
 
-const backupsCreate = async ({ name }) => {
+const backupsCreate = async({ name }) => {
   process.stdout.write('Starting backup...\n')
 
   const projectData = await getProjectData()
@@ -17,7 +17,7 @@ const backupsCreate = async ({ name }) => {
   const now = new Date()
   const dateString = now.getUTCFullYear() + '-'
     + ('' + (now.getUTCMonth() + 1)).padStart(2, '0') + '-'
-    + ('' + now.getUTCDate()).padStart(2,'0') + '-'
+    + ('' + now.getUTCDate()).padStart(2, '0') + '-'
     + ('' + now.getUTCHours()).padStart(2, '0')
     + ('' + now.getUTCMinutes()).padStart(2, '0')
     + ('' + now.getUTCSeconds()).padStart(2, '0')
@@ -35,8 +35,7 @@ const backupsCreate = async ({ name }) => {
   }
 
   const targetDir = fsPath.join(BACKUP_DIR, name)
-  await fs.mkdir(targetDir, { recursive: true })
-
+  await fs.mkdir(targetDir, { recursive : true })
 
   const copyCommand = `gcloud compute scp ${instance}:/var/lib/docker/cloudcraft/${tarFile} ${targetDir} --zone=${zone} --project=${project}`
   process.stdout.write(`Copying backup to ${targetDir}...\n`)
@@ -49,7 +48,7 @@ const backupsCreate = async ({ name }) => {
 
   const cleanupCommand = `gcloud compute ssh ${instance} --zone=${zone} --project=${project} --command='sudo bash -c "rm /var/lib/docker/cloudcraft/${tarFile}"'`
 
-  process.stdout.write(`Cleaning up remote backup file...\n`)
+  process.stdout.write('Cleaning up remote backup file...\n')
   try {
     await tryExecAsync(cleanupCommand)
   }

@@ -11,63 +11,63 @@ export const cliSpec = {
     }
   ],
   commands : [
-    { 
-      name: 'backups',
-      summary: 'Selects backup commands.',
-      arguments: [
-        { name: 'command', defaultOption: true, required: true, description: 'The backup action to perform.' }
+    {
+      name      : 'backups',
+      summary   : 'Selects backup commands.',
+      arguments : [
+        { name : 'command', defaultOption : true, required : true, description : 'The backup action to perform.' }
       ],
-      commands: [
-        { 
-          name: 'create',
-          summary: 'Backs up the named server.',
-          description: 'Zips the remote server files and copies them to the cloudcraft data directory.',
-          arguments: [
+      commands : [
+        {
+          name        : 'create',
+          summary     : 'Backs up the named server.',
+          description : 'Zips the remote server files and copies them to the cloudcraft data directory.',
+          arguments   : [
             {
-              name: 'server-name',
-              description: 'Name of the server to backup.',
-              defaultOption: true,
-              required: true
+              name          : 'server-name',
+              description   : 'Name of the server to backup.',
+              defaultOption : true,
+              required      : true
             }
           ]
         },
         {
-          name: 'delete',
-          summary: 'Deletes the named or chosen backups.',
-          description: 'Deletes the specified backup file(s) or, if none specified, asks the user to choose one or more files for deletion.',
-          arguments: [
-            { 
-              name: 'backup-files',
-              description: 'The backup file(s) to delete.',
-              defaultOption: true,
-              multiple: true
+          name        : 'delete',
+          summary     : 'Deletes the named or chosen backups.',
+          description : 'Deletes the specified backup file(s) or, if none specified, asks the user to choose one or more files for deletion.',
+          arguments   : [
+            {
+              name          : 'backup-files',
+              description   : 'The backup file(s) to delete.',
+              defaultOption : true,
+              multiple      : true
             }
           ]
         },
         {
-          name: 'list',
-          summary: 'Lists the current backups.',
-          arguments: [
-            { 
-              name: 'format',
-              description: "Specifies the format of the output. Can be 'terminal' (default), 'json', or 'yaml'.",
-              default: 'terminal'
+          name      : 'list',
+          summary   : 'Lists the current backups.',
+          arguments : [
+            {
+              name        : 'format',
+              description : "Specifies the format of the output. Can be 'terminal' (default), 'json', or 'yaml'.",
+              default     : 'terminal'
             }
           ]
         },
         {
-          name: 'restore',
-          summary: 'Restores the named or chosen backup.',
-          description: "Restores the specified backup or, if none specified, asks the user to choose a backup to restore. By default, the backup will be restored to the server from which it originated. This can be changed with the '--target' option.",
-          arguments: [
-            { 
-              name: 'backup-file',
-              description: 'The backup file to restore.',
-              defaultOption: true
+          name        : 'restore',
+          summary     : 'Restores the named or chosen backup.',
+          description : "Restores the specified backup or, if none specified, asks the user to choose a backup to restore. By default, the backup will be restored to the server from which it originated. This can be changed with the '--target' option.",
+          arguments   : [
+            {
+              name          : 'backup-file',
+              description   : 'The backup file to restore.',
+              defaultOption : true
             },
             {
-              name: 'target',
-              description: 'The server to restore the backup to.'
+              name        : 'target',
+              description : 'The server to restore the backup to.'
             }
           ]
         }
@@ -110,27 +110,27 @@ export const cliSpec = {
       ]
     },
     { name : 'list', summary : 'Lists Cloudcraft managed Minecraft servers.' },
-    { 
-      name: 'ssh', 
-      summary: 'Displays the proper SSH command or executes specified command on remote server.',
-      description: `The 'ssh' command, with no options, is used to generate and display the SSH command you would use to log into the specified server. With '--eval-mode', you can do:
+    {
+      name        : 'ssh',
+      summary     : 'Displays the proper SSH command or executes specified command on remote server.',
+      description : `The 'ssh' command, with no options, is used to generate and display the SSH command you would use to log into the specified server. With '--eval-mode', you can do:
 \`\`\`
 eval $(cloudcraft ssh --eval-mode some-sever
 \`\`\`
 You can also use the \`--command\` option to execute a single command.
 `,
-      arguments: [
-        { 
-          name: 'server-name', 
-          defaultOption: true, 
-          required: true, 
-          description: 'The name of the server to log into.' 
+      arguments : [
+        {
+          name          : 'server-name',
+          defaultOption : true,
+          required      : true,
+          description   : 'The name of the server to log into.'
         },
-        { name: 'command', description: 'Will run the specified command and exit.' },
-        { 
-          name: 'eval-mode', 
-          description: "Produces output suitable to 'eval $(cloudcraft ssh a-server)'.", 
-          type: Boolean 
+        { name : 'command', description : 'Will run the specified command and exit.' },
+        {
+          name        : 'eval-mode',
+          description : "Produces output suitable to 'eval $(cloudcraft ssh a-server)'.",
+          type        : Boolean
         }
       ]
     },
@@ -171,6 +171,6 @@ You can also use the \`--command\` option to execute a single command.
           type        : Boolean
         }
       ]
-    },
+    }
   ]
 }

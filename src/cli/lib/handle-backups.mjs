@@ -9,7 +9,7 @@ import { handleBackupsRestore } from './backups/handle-backups-restore'
 const handleBackups = async({ argv }) => {
   const backupsCLISpec = cliSpec.commands.find(({ name }) => name === 'backups')
   const backupOptionsSpec = backupsCLISpec.arguments
-  const backupOptions = commandLineArgs(backupOptionsSpec, { argv, stopAtFirstUnknown: true })
+  const backupOptions = commandLineArgs(backupOptionsSpec, { argv, stopAtFirstUnknown : true })
   const { command } = backupOptions
   argv = backupOptions._unknown || []
 

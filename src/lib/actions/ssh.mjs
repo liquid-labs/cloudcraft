@@ -1,4 +1,3 @@
-import { InstancesClient } from '@google-cloud/compute'
 import { tryExecAsync } from '@liquid-labs/shell-toolkit'
 
 import { getProjectData } from './lib/terraform-lib'
@@ -20,7 +19,7 @@ const ssh = async({ command, evalMode, name }) => {
     process.stdout.write(sshCommand + '\n')
     return
   }
-  const { code, stderr, stdout } = await tryExecAsync(sshCommand, { noThrow: true })
+  const { code, stderr, stdout } = await tryExecAsync(sshCommand, { noThrow : true })
 
   if (code !== 0) {
     process.stderr.write('SSH command failed:\n' + stderr)

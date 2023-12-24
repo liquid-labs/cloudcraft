@@ -4,11 +4,11 @@ import { BACKUP_DIR } from '../../../constants'
 
 const getBackupFiles = async() => {
   const isATar = (file) => file.name.endsWith('.tar.gz')
-  const backupFiles = await find({ onlyFiles: true, root: BACKUP_DIR, test: isATar })
+  const backupFiles = await find({ onlyFiles : true, root : BACKUP_DIR, test : isATar })
   const backupFileRE = /([^/]+)\/([^/]+\.([0-9-]+)\.tar\.gz)$/
   const backupEntries = backupFiles.map((filePath) => {
     const match = filePath.match(backupFileRE)
-    const [,serverName, fileName, timestamp] = match
+    const [, serverName, fileName, timestamp] = match
     return { fileName, filePath, serverName, timestamp }
   })
 

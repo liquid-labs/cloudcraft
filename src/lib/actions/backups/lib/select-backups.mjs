@@ -1,16 +1,18 @@
+import { Questioner } from '@liquid-labs/question-and-answer'
+
 import { getBackupFiles } from './get-backup-files'
 
-const selectBackups = async ({ multiValue = false } = {}) => {
+const selectBackups = async({ backupFiles, multiValue = false } = {}) => {
   const backupEntries = await getBackupFiles()
 
   if (backupFiles === undefined || backupFiles.length === 0) {
     const interrogationBundle = {
-      actions: [
+      actions : [
         {
-          prompt: "Select one or more files to delete:",
-          parameter: 'BACKUP_FILES',
-          multiValue: true,
-          options: backupEntries.map(({ fileName }) => fileName)
+          prompt    : 'Select one or more files to delete:',
+          parameter : 'BACKUP_FILES',
+          multiValue,
+          options   : backupEntries.map(({ fileName }) => fileName)
         }
       ]
     }
@@ -18,6 +20,9 @@ const selectBackups = async ({ multiValue = false } = {}) => {
     await questioner.question()
 
     backupFiles = questioner.get('BACKUP_FILES')
+    if (!Array.isArray(backupFiles)) {
+      backupFiles = [backupFiles]
+    }
   }
 
   backupFiles = backupFiles.map((fileName) => {

@@ -22,7 +22,7 @@ const status = async({ name, noPing = false, refresh }) => {
   const [instanceData] = await instancesClient.get({
     instance,
     project,
-    zone  
+    zone
   })
   const hostStatus = instanceData.status
   const hostRunning = hostStatus === 'RUNNING'
