@@ -6,8 +6,9 @@ const handleBackupsDelete = async({ argv, backupsCLISpec }) => {
   const deleteOptionsSpec = backupsCLISpec.commands.find(({ name }) => name === 'delete').arguments
   const deleteOptions = commandLineArgs(deleteOptionsSpec, { argv })
   const backupFiles = deleteOptions['backup-files']
+  const { confirm } = deleteOptions
 
-  await backupsDelete({ backupFiles })
+  await backupsDelete({ backupFiles, confirm })
 }
 
 export { handleBackupsDelete }

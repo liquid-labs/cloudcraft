@@ -6,9 +6,9 @@ const handleBackupsRestore = async({ argv, backupsCLISpec }) => {
   const restoreOptionsSpec = backupsCLISpec.commands.find(({ name }) => name === 'restore').arguments
   const restoreOptions = commandLineArgs(restoreOptionsSpec, { argv })
   const backupFile = restoreOptions['backup-file']
-  const { target } = restoreOptions
+  const { confirm, target } = restoreOptions
 
-  await backupsRestore({ backupFile, target })
+  await backupsRestore({ backupFile, confirm, target })
 }
 
 export { handleBackupsRestore }

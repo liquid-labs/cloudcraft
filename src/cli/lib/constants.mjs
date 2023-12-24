@@ -41,6 +41,11 @@ export const cliSpec = {
               description   : 'The backup file(s) to delete.',
               defaultOption : true,
               multiple      : true
+            },
+            {
+              name: 'confirm',
+              description: "If set, then the 'yes/no' confirmation will be skipped.",
+              default: ' false'
             }
           ]
         },
@@ -64,6 +69,11 @@ export const cliSpec = {
               name          : 'backup-file',
               description   : 'The backup file to restore.',
               defaultOption : true
+            },
+            {
+              name: 'confirm',
+              description: "If set, then the 'yes/no' confirmation will be skipped.",
+              default: ' false'
             },
             {
               name        : 'target',

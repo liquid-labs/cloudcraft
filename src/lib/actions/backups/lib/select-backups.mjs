@@ -25,15 +25,15 @@ const selectBackups = async({ backupFiles, multiValue = false } = {}) => {
     }
   }
 
-  backupFiles = backupFiles.map((fileName) => {
+  const selectedEntries = backupFiles.map((fileName) => {
     const entry = backupEntries.find(({ fileName: testName }) => fileName === testName)
     if (entry === undefined) {
       throw new Error(`Could not locate backup file '${fileName}'.`)
     }
-    return entry.filePath
+    return entry
   })
 
-  return backupFiles
+  return selectedEntries
 }
 
 export { selectBackups }
