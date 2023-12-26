@@ -43,9 +43,9 @@ export const cliSpec = {
               multiple      : true
             },
             {
-              name: 'confirm',
-              description: "If set, then the 'yes/no' confirmation will be skipped.",
-              default: ' false'
+              name        : 'confirm',
+              description : "If set, then the 'yes/no' confirmation will be skipped.",
+              default     : ' false'
             }
           ]
         },
@@ -71,9 +71,9 @@ export const cliSpec = {
               defaultOption : true
             },
             {
-              name: 'confirm',
-              description: "If set, then the 'yes/no' confirmation will be skipped.",
-              default: ' false'
+              name        : 'confirm',
+              description : "If set, then the 'yes/no' confirmation will be skipped.",
+              default     : ' false'
             },
             {
               name        : 'target',

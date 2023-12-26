@@ -1,6 +1,6 @@
 import { Questioner } from '@liquid-labs/question-and-answer'
 
-const confirmAction = async ({ actionDescription, confirm }) => {
+const confirmAction = async({ actionDescription, confirm }) => {
   if (confirm === true) {
     return true
   }

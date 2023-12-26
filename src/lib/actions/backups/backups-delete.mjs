@@ -7,9 +7,9 @@ const backupsDelete = async({ backupFiles, confirm }) => {
   const backupEntries = await selectBackups({ backupFiles, multiValue : true })
 
   await confirmAction({
-    actionDescription: `delete backup file${backupEntries.length > 1 ? 's' : ''} ` 
+    actionDescription : `delete backup file${backupEntries.length > 1 ? 's' : ''} `
       + backupEntries.map(({ fileName }) => fileName).join(', '),
-    confirm,
+    confirm
   })
 
   process.stdout.write(`Deleting ${backupEntries.length} backup files...\n`)
