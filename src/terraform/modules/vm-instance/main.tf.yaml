@@ -8,8 +8,9 @@ locals:
   server_image: '${var.server_type == "bedrock" ? "itzg/minecraft-bedrock-server" : "itzg/minecraft-server"}'
   server_protocol: '${var.server_type == "bedrock" ? "udp" : "tcp"}'
   ext_port: '${var.server_type == "bedrock" ? 19132 : 25565}'
+  docker_lib_dir: /var/lib/docker
   host_bind_dir:
-    value: /var/lib/docker/cloudcraft
+    value: ${local.docker_lib_dir}/cloudcraft
     description: "The path on the host instance to bind to the container's '/data' dir where all the world and other server state files are stored. Because the container optimized image limits '/var' in general with noexec, we store it under the docker working dir because it is stateful and allows execution. Refer to: https://cloud.google.com/container-optimized-os/docs/concepts/security#filesystem for details on the COS mount permissions."
 
 resource:
@@ -62,9 +63,8 @@ resource:
               /dev/disk/by-id/google-${google_compute_disk.cloudcraft_data_disk.name} \
               ${local.host_bind_dir.value}
           fi
-          chmod a+r /var/lib/docker
-          chmod a+x /var/lib/docker
-          chmod a+r /var/lib/cloudcraft
+          chmod a+rx ${local.docker_lib_dir}
+          chmod a+rw ${local.host_bind_dir.value}
  
           echo "
         # credit to https://www.redhat.com/sysadmin/systemd-automate-recovery
@@ -80,7 +80,8 @@ resource:
         [Service]
         User=root
         WorkingDirectory=/var/lib/docker
-        ExecStart=/bin/bash -c 'docker rm mc || true; \
+        ExecStart=/bin/bash -c 'docker stop mc || true; \
+        docker rm mc || true; \
         docker run \
           --detach \
           --interactive \
