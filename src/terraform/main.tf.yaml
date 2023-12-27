@@ -163,8 +163,9 @@ module:
     data_disk_size: ${each.value.data_disk_size}
     # vm vars
     machine_type: ${each.value.machine_type}
-    internal_ip: ${each.value.internal_ip}
     server_type: ${each.value.server_type}
     server_memory: ${each.value.server_memory}
+    # network vars
+    internal_ip: ${each.value.internal_ip}
     network: ${google_compute_network.cloudcraft_network}
     subnet: ${google_compute_subnetwork.cloudcraft_subnet}
