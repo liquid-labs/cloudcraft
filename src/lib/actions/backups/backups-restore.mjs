@@ -1,25 +1,8 @@
 import { tryExecAsync } from '@liquid-labs/shell-toolkit'
 
-import { confirmAction } from './lib/confirm-action'
-import { selectBackups } from './lib/select-backups'
 import { getProjectData } from '../lib/terraform-lib'
 
-const backupsRestore = async({ backupFile, confirm, target }) => {
-  const backupFiles = backupFile === undefined ? undefined : [backupFile]
-  // will always be an array of one
-  const backupEntries = await selectBackups({ backupFiles, multiValue : false })
-  if (backupEntries.length !== 1) {
-    throw new Error(`Unexpected number of backups (${backupEntries.length}) selected for restoration. Must select exactly one.`)
-  }
-  const backupEntry = backupEntries[0]
-
-  if (target === undefined) {
-    target = backupEntry.serverName
-    // TODO: verify target is a valid server name
-  }
-
-  await confirmAction({ actionDescription : 'restore backup file ' + backupEntry.fileName, confirm })
-
+const backupsRestore = async({ backupEntry, confirm, target }) => {
   process.stdout.write(`Restoring ${backupEntry.fileName} on ${target}...\n`)
 
   const projectData = await getProjectData()

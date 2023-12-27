@@ -26,15 +26,13 @@ resource:
       name: cloudcraft-boot-disk-${var.name}
       type: pd-standard
       image: ${var.host_image}
-      lifecycle:
-        prevent_destroy: false # true
       project: ${var.project_id}
     cloudcraft_data_disk:
       name: cloudcraft-data-disk-${var.name}
       type: pd-standard
       size: ${var.data_disk_size}
       lifecycle:
-        prevent_destroy: true
+        prevent_destroy: false # true
       project: ${var.project_id}
 
   google_compute_instance:
@@ -55,7 +53,7 @@ resource:
       metadata_startup_script: |
         {
           echo "Starting at $(date)"
-          if ! [ -d ${local.host.bind_dir.value} ]; then
+          if ! [ -d ${local.host_bind_dir.value} ]; then
             mkdir -p ${local.host_bind_dir.value}
             mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard \
               /dev/disk/by-id/google-${google_compute_disk.cloudcraft_data_disk.name}

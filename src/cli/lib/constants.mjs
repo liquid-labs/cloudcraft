@@ -98,6 +98,14 @@ export const cliSpec = {
       ]
     },
     {
+      name: 'destroy',
+      summary: 'Destroys the named server or all resources.',
+      arguments: [
+        { name: 'server-name', defaultOption: true, description: 'The name of the server to destroy.' },
+        { name: 'confirm', description: "If set, then the 'yes/no' confirmation will be skipped.", default: false }
+      ]
+    },
+    {
       name      : 'help',
       summary   : 'With no command specified, prints a list of available commands or, when a command is specified, prints help for the specified command.',
       arguments : [

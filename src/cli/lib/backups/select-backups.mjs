@@ -1,6 +1,6 @@
 import { Questioner } from '@liquid-labs/question-and-answer'
 
-import { getBackupFiles } from './get-backup-files'
+import { getBackupFiles } from '../../../lib/actions/backups/lib/get-backup-files'
 
 const selectBackups = async({ backupFiles, multiValue = false } = {}) => {
   const backupEntries = await getBackupFiles()

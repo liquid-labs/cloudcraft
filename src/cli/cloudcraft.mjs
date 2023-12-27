@@ -3,6 +3,7 @@ import commandLineArgs from 'command-line-args'
 import { cliSpec } from './lib/constants'
 import { handleBackups } from './lib/handle-backups'
 import { handleCreate } from './lib/handle-create'
+import { handleDestroy } from './lib/handle-destroy'
 import { handleHelp } from './lib/handle-help'
 import { handleInfo } from './lib/handle-info'
 import { handleList } from './lib/handle-list'
@@ -26,6 +27,8 @@ const cloudcraft = async() => {
       handleBackups({ argv }); break
     case 'create':
       handleCreate({ argv }); break
+    case 'destroy':
+      handleDestroy({ argv }); break
     case 'document':
       console.log(commandLineDocumentation(cliSpec, { sectionDepth : 2, title : 'Command reference' }))
       break
