@@ -192,7 +192,7 @@ You can also use the \`--command\` option to execute a single command.
     },
     {
       name : 'terraform',
-      summary : 'Runs the terraform command, as specified, in the staged CloudCraft terraform directory.',
+      summary : 'Runs the terraform command, as specified, in the staged CloudCraft terraform directory. This command is meant primarily for developers.',
       description: "The entire command (everything after 'cloudcraft') is executed from the CloudCraft terraform staging directory. E.g., 'cloudcraft terraform plan -no-color' executes 'terraform plan -no-color'."
     }
   ]
