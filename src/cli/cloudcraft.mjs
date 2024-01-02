@@ -11,6 +11,7 @@ import { handleSSH } from './lib/handle-ssh'
 import { handleStart } from './lib/handle-start'
 import { handleStatus } from './lib/handle-status'
 import { handleStop } from './lib/handle-stop'
+import { handleTerraform } from './lib/handle-terraform'
 
 import { commandLineDocumentation } from 'command-line-documentation'
 
@@ -47,6 +48,8 @@ const cloudcraft = async() => {
       handleStatus({ argv }); break
     case 'stop':
       handleStop({ argv }); break
+    case 'terraform':
+      handleTerraform({ argv }); break
     default:
       process.stderr.write('Uknown command: ' + command + '\n\n')
       handleHelp()

@@ -1,4 +1,5 @@
 export * from './backups'
+export * from './terraform'
 
 export * from './create'
 export * from './info'

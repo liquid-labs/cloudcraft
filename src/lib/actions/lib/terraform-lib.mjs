@@ -40,21 +40,15 @@ const getServersData = async() => {
 
 const stageTerraformFiles = async() => {
   const terraformSrcPath = fsPath.join(__dirname, 'terraform')
-  const sourceFiles = await find({ root : terraformSrcPath, tests : [({ name }) => name.endsWith('.yaml')] })
+  const sourceFiles = await find({ root : terraformSrcPath, tests : [({ name }) => name.endsWith('.tf')] })
 
   for (const sourceFile of sourceFiles) {
     const builtFile = sourceFile
       .replace(new RegExp('.+' + fsPath.sep + 'terraform'), BUILD_DIR)
-      .replace(/\.yaml$/, '.json')
 
-    const buildDirPromise = fs.mkdir(fsPath.dirname(builtFile), { recursive : true })
+    await fs.mkdir(fsPath.dirname(builtFile), { recursive : true })
 
-    const yamlContents = await fs.readFile(sourceFile)
-    const data = yaml.load(yamlContents)
-    const jsonContents = JSON.stringify(data, null, '  ')
-
-    await buildDirPromise
-    await fs.writeFile(builtFile, jsonContents)
+    await fs.cp(sourceFile, builtFile)
   }
 }
 

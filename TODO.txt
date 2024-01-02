@@ -1,0 +1,5 @@
+- add name to cloudcraft firewall rule
+- hardcode the network name (remove from variables)
+- swap out the 'var.network_name' references with 'google_compute_network.cloudcraft_network.id'
+- change "cloudcraft-project" to "cloudcraft_project"
+- swap out the 'random_id.project_id.hex' references with 'google_project.cloudcraft_project.id'

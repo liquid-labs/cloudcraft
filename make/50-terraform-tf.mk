@@ -1,4 +1,4 @@
-SDLC_TERRAFORM_YAML_SRC:=$(shell find $(SRC)/terraform -name "*.yaml")
+SDLC_TERRAFORM_YAML_SRC:=$(shell find $(SRC)/terraform -name "*.tf")
 SDLC_TERRAFORM_YAML_BUILT:=$(patsubst $(SRC)/%, $(DIST)/%, $(SDLC_TERRAFORM_YAML_SRC))
 
 BUILD_TARGETS+=$(SDLC_TERRAFORM_YAML_BUILT)
