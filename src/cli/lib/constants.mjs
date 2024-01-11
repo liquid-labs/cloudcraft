@@ -101,8 +101,19 @@ export const cliSpec = {
       name: 'destroy',
       summary: 'Destroys the named server or all resources.',
       arguments: [
-        { name: 'server-name', defaultOption: true, description: 'The name of the server to destroy.' },
-        { name: 'confirm', description: "If set, then the 'yes/no' confirmation will be skipped.", default: false }
+        { 
+          name: 'all', 
+          type: Boolean, 
+          description: "If true, then destroys all infrastructure. Incompatible with '--server-name'."
+        },
+        { 
+          name: 'confirm', 
+          type: Boolean, 
+          description: "If set, then the 'yes/no' confirmation will be skipped.", 
+          default: false 
+        },
+        { name: 'plan', type: Boolean, description: "Prints the destroy plan without actually doing anything." },
+        { name: 'server-name', defaultOption: true, description: 'The name of the server to destroy.' }
       ]
     },
     {

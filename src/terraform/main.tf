@@ -61,7 +61,7 @@ resource "google_compute_network" "cloudcraft_network" {
   name                    = var.network_name
   auto_create_subnetworks = false
   project                 = random_id.project_id.hex
-  depends_on              = [google_project.cloudcraft-project]
+  depends_on              = [google_project.cloudcraft-project, google_project_service.compute_api]
 }
 
 resource "google_compute_subnetwork" "cloudcraft_subnet" {

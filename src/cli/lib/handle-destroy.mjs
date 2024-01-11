@@ -8,14 +8,18 @@ const handleDestroy = async({ argv }) => {
   const destroyOptionsSpec = cliSpec.commands.find(({ name }) => name === 'destroy').arguments
   const destroyOptions = commandLineArgs(destroyOptionsSpec, { argv })
   const name = destroyOptions['server-name']
-  const { confirm } = destroyOptions
+  const { all, confirm, plan } = destroyOptions
 
-  await confirmAction({
-    actionDescription : `delete server ${name}`,
-    confirm
-  })
+  if (name !== undefined && all === true) {
+    throw new Error("Cannot set both '--all' and '<server name>' in destroy option. Use one mode.")
+  }
 
-  await destroy({ name })
+  if (plan !== true) {
+    const actionDescription = all === true ? 'destory project' : `destroy server ${name}`
+    await confirmAction({ actionDescription, confirm })
+  }
+
+  await destroy({ all, name, plan })
 }
 
 export { handleDestroy }
