@@ -8,7 +8,8 @@ const handleBackupsRestore = async({ argv, backupsCLISpec }) => {
   const restoreOptionsSpec = backupsCLISpec.commands.find(({ name }) => name === 'restore').arguments
   const restoreOptions = commandLineArgs(restoreOptionsSpec, { argv })
   const backupFile = restoreOptions['backup-file']
-  const { confirm, target } = restoreOptions
+  const { confirm } = restoreOptions
+  let { target } = restoreOptions
 
   const backupFiles = backupFile === undefined ? undefined : [backupFile]
   // will always be an array of one

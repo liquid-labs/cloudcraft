@@ -2,7 +2,6 @@ import * as fsPath from 'node:path'
 import * as fs from 'node:fs/promises'
 
 import { find } from 'find-plus'
-import yaml from 'js-yaml'
 
 import { tryExecAsync } from '@liquid-labs/shell-toolkit'
 
@@ -15,15 +14,15 @@ const deployTerraform = async({ plan = false } = {}) => {
   const applyCommand = `cd '${BUILD_DIR}' && terraform `
     + (plan === true ? 'plan' : 'apply -auto-approve')
     + ` -var-file="${varFileName}" `
-    
-  await tryExecAsync( applyCommand, { noThrow : true, silent : false })
+
+  await tryExecAsync(applyCommand, { noThrow : true, silent : false })
 }
 
 const destroyTerraform = async({ plan = false } = {}) => {
   const command = `cd '${BUILD_DIR}' && terraform `
     + (plan === true ? 'plan -destroy' : 'destroy -auto-approve')
-    + ` -var-file="${varFileName}" ` 
-  await tryExecAsync(command, { noThrow: true, silent: false })
+    + ` -var-file="${varFileName}" `
+  await tryExecAsync(command, { noThrow : true, silent : false })
 }
 
 const getProjectData = async() => {
@@ -81,12 +80,12 @@ const stageTerraformVars = async({ billingAccountName, organizationName/*, proje
   await fs.writeFile(varsPath, varsContent)
 }
 
-export { 
-  deployTerraform, 
-  destroyTerraform, 
-  getProjectData, 
-  getServerData, 
-  getServersData, 
-  stageTerraformFiles, 
+export {
+  deployTerraform,
+  destroyTerraform,
+  getProjectData,
+  getServerData,
+  getServersData,
+  stageTerraformFiles,
   stageTerraformVars
 }

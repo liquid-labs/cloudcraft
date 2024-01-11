@@ -1,4 +1,4 @@
-import { deleteConfig, getConfig, saveConfig } from './lib/config-lib'
+import { getConfig, saveConfig } from './lib/config-lib'
 import { deployTerraform, destroyTerraform, stageTerraformVars } from './lib/terraform-lib'
 
 const destroy = async({ all = false, name, plan = false }) => {
@@ -7,20 +7,24 @@ const destroy = async({ all = false, name, plan = false }) => {
     await destroyAll({ config, plan })
   }
   else {
-    await destroyServer({ config, name, plan})
+    await destroyServer({ config, name, plan })
   }
 }
 
 const destroyAll = async({ config, plan }) => {
   const actionDescription = (plan === true ? 'Planning destruction of ' : 'Destroying ')
     + 'cloudcraft project...\n'
+  process.stdout.write(actionDescription)
   await destroyTerraform({ plan })
-  delete config.servers
-  await Promise.all([
-    saveConfig(config),
-    // stageTerraformFiles(),
-    stageTerraformVars(config)
-  ])
+  if (plan !== true) {
+    delete config.servers
+    await Promise.all([
+      saveConfig(config),
+      // stageTerraformFiles(),
+      stageTerraformVars(config)
+    ])
+    process.stdout.write('Cloudcraft project destroyed.')
+  }
 }
 
 const destroyServer = async({ config, name, plan }) => {
@@ -28,7 +32,6 @@ const destroyServer = async({ config, name, plan }) => {
     + `'${name}'...\n`
   process.stdout.write(actionDescription)
 
-  
   const origConfig = structuredClone(config)
 
   delete config.servers[name]
@@ -53,8 +56,7 @@ const destroyServer = async({ config, name, plan }) => {
     process.stdout.write('done\n')
   }
   else {
-    const summaryMessage = all === true ? 'Destroyed cloudcraft project.' : `${name} destroyed.`
-    process.stdout.write(summaryMessage + '\n')
+    process.stdout.write(`${name} destroyed.\n`)
   }
 }
 

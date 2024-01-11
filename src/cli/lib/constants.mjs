@@ -98,22 +98,22 @@ export const cliSpec = {
       ]
     },
     {
-      name: 'destroy',
-      summary: 'Destroys the named server or all resources.',
-      arguments: [
-        { 
-          name: 'all', 
-          type: Boolean, 
-          description: "If true, then destroys all infrastructure. Incompatible with '--server-name'."
+      name      : 'destroy',
+      summary   : 'Destroys the named server or all resources.',
+      arguments : [
+        {
+          name        : 'all',
+          type        : Boolean,
+          description : "If true, then destroys all infrastructure. Incompatible with '--server-name'."
         },
-        { 
-          name: 'confirm', 
-          type: Boolean, 
-          description: "If set, then the 'yes/no' confirmation will be skipped.", 
-          default: false 
+        {
+          name        : 'confirm',
+          type        : Boolean,
+          description : "If set, then the 'yes/no' confirmation will be skipped.",
+          default     : false
         },
-        { name: 'plan', type: Boolean, description: "Prints the destroy plan without actually doing anything." },
-        { name: 'server-name', defaultOption: true, description: 'The name of the server to destroy.' }
+        { name : 'plan', type : Boolean, description : 'Prints the destroy plan without actually doing anything.' },
+        { name : 'server-name', defaultOption : true, description : 'The name of the server to destroy.' }
       ]
     },
     {
@@ -202,9 +202,9 @@ You can also use the \`--command\` option to execute a single command.
       ]
     },
     {
-      name : 'terraform',
-      summary : 'Runs the terraform command, as specified, in the staged CloudCraft terraform directory. This command is meant primarily for developers.',
-      description: "The entire command (everything after 'cloudcraft') is executed from the CloudCraft terraform staging directory. E.g., 'cloudcraft terraform plan -no-color' executes 'terraform plan -no-color'."
+      name        : 'terraform',
+      summary     : 'Runs the terraform command, as specified, in the staged CloudCraft terraform directory. This command is meant primarily for developers.',
+      description : "The entire command (everything after 'cloudcraft') is executed from the CloudCraft terraform staging directory. E.g., 'cloudcraft terraform plan -no-color' executes 'terraform plan -no-color'."
     }
   ]
 }
