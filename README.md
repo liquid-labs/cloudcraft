@@ -85,7 +85,7 @@ Selects backup commands.
 
 Zips the remote server files and copies them to the cloudcraft data directory.
 
-####### `create` options
+___`create` options___
 
 |Option|Description|
 |------|------|
@@ -96,7 +96,7 @@ Zips the remote server files and copies them to the cloudcraft data directory.
 
 Deletes the specified backup file(s) or, if none specified, asks the user to choose one or more files for deletion.
 
-####### `delete` options
+___`delete` options___
 
 |Option|Description|
 |------|------|
@@ -108,7 +108,7 @@ Deletes the specified backup file(s) or, if none specified, asks the user to cho
 
 Lists the current backups.
 
-####### `list` options
+___`list` options___
 
 |Option|Description|
 |------|------|
@@ -119,7 +119,7 @@ Lists the current backups.
 
 Restores the specified backup or, if none specified, asks the user to choose a backup to restore. By default, the backup will be restored to the server from which it originated. This can be changed with the '--target' option.
 
-####### `restore` options
+___`restore` options___
 
 |Option|Description|
 |------|------|
