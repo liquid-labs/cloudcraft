@@ -7,16 +7,16 @@ import { create } from '../../lib/actions'
 const handleCreate = async({ argv }) => {
   const createOptionsSpec = cliSpec.commands.find(({ name }) => name === 'create').arguments
   const createOptions = commandLineArgs(createOptionsSpec, { argv })
-  const { name } = createOptions
+  const serverName = createOptions['server-name']
   const serverType = createOptions['server-type'] // default set in 'create' if undefined
 
-  if (name === undefined) {
-    process.stderr.write('Missing required \'name\' in create command.\n\n')
+  if (serverName === undefined) {
+    process.stderr.write('Missing required \'server-name\' positional argument in create command.\n\n')
     handleHelp({ argv : ['create'] })
     process.exit(1)
   }
-  else if (!name.match(/^[a-z][a-z0-9-]*$/)) {
-    process.stderr.write(`Invalid name '${name}'. Name musts start with a lowercase letter and consist of lowercase letters, numbers, and dashes (-).`)
+  else if (!serverName.match(/^[a-z][a-z0-9-]*$/)) {
+    process.stderr.write(`Invalid server name '${serverName}'. Name musts start with a lowercase letter and consist of lowercase letters, numbers, and dashes (-).`)
     process.exit(1)
   }
 
@@ -25,7 +25,7 @@ const handleCreate = async({ argv }) => {
     process.exit(1)
   }
 
-  await create({ name, serverType })
+  await create({ serverName, serverType })
 }
 
 export { handleCreate }

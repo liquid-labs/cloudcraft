@@ -6,7 +6,7 @@ import { selectOrg } from './lib/select-org'
 import { deployTerraform, stageTerraformFiles, stageTerraformVars } from './lib/terraform-lib'
 
 const create = async({
-  name = throw new Error("Must define 'name' when creating a server."),
+  serverName = throw new Error("Must define 'serverName' when creating a server."),
   cloudcraftServerMemory,
   computeDiskSize,
   hostImage,
@@ -23,8 +23,8 @@ const create = async({
   // const bucketName = await selectBucket({ config, projectId })
 
   const servers = config.servers || {}
-  if (name in servers) {
-    throw new Error(`Server '${name}' already exists. You must destroy or update the server.`)
+  if (serverName in servers) {
+    throw new Error(`Server '${serverName}' already exists. You must destroy or update the server.`)
   }
 
   const ipPrefix = '10.2.'
@@ -47,7 +47,7 @@ const create = async({
   }
   const internalIP = ipGuess
 
-  servers[name] = {
+  servers[serverName] = {
     server_memory      : cloudcraftServerMemory,
     computer_disk_size : computeDiskSize,
     host_image         : hostImage,
