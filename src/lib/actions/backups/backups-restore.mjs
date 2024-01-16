@@ -7,8 +7,8 @@ const backupsRestore = async({ backupEntry, confirm, target }) => {
 
   const projectData = await getProjectData()
   const instance = `cloudcraft-host-${target}`
-  const project = projectData.project_id.value
-  const zone = projectData.zone.value
+  const project = projectData.project_id
+  const zone = projectData.zone
 
   process.stdout.write('Stopping Minecraft process...\n')
   const stopMinecraftCommand = `gcloud compute ssh ${instance} --zone=${zone} --project=${project} --command='sudo docker stop mc'`

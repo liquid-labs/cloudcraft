@@ -14,8 +14,8 @@ const stop = async({ name, refresh }) => {
   const instancesClient = new InstancesClient()
   const [ioOperation] = await instancesClient.stop({
     instance : `cloudcraft-host-${name}`,
-    project  : projectData.project_id.value,
-    zone     : projectData.zone.value
+    project  : projectData.project_id,
+    zone     : projectData.zone
   })
 
   const { done, latestResponse } = ioOperation

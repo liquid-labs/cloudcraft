@@ -5,8 +5,8 @@ import { getProjectData } from './lib/terraform-lib'
 const ssh = async({ command, evalMode, name }) => {
   const projectData = await getProjectData()
   const instance = `cloudcraft-host-${name}`
-  const project = projectData.project_id.value
-  const zone = projectData.zone.value
+  const project = projectData.project_id
+  const zone = projectData.zone
 
   let sshCommand = `gcloud compute ssh ${instance} --zone=${zone} --project=${project}`
   if (command) {
