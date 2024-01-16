@@ -50,7 +50,8 @@ const makeSections = ({ command, commandsSpec = cliSpec, prefix }) => {
   const commandSpec = commandsSpec.commands.find(({ name }) => name === command)
 
   if (commandSpec === undefined) {
-    process.stderr.write(`No such command '${command}'.\n`)
+    process.stderr.write(`No such command '${command}'.\n\n`)
+    handleHelp({ argv: [] })
     process.exit(1)
   }
 
