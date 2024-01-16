@@ -1,7 +1,7 @@
 {
   "name": "cloudcraft",
   "version": "1.0.0-alpha.0",
-  "description": "CLI to setup and manage your own cloud-based Minecraft server.",
+  "description": "A robust Minecraft server management tool using Google Cloud.",
   "main": "dist/cloudcraft.js",
   "scripts": {
     "build": "make",
