@@ -3,8 +3,8 @@ export const VALID_SERVER_TYPES = ['bedrock', 'java']
 export const cliSpec = {
   mainCommand : 'cloudcraft',
   mainOptions : [
-    { name : 'command', defaultOption : true, description: 'The command to run or a sub-command group.' },
-    { name : 'quiet', alias: 'q', type: Boolean, descirption: 'Makes informational output less chatty.' },
+    { name : 'command', defaultOption : true, description : 'The command to run or a sub-command group.' },
+    { name : 'quiet', alias : 'q', type : Boolean, descirption : 'Makes informational output less chatty.' },
     {
       name        : 'throw-error',
       type        : Boolean,
@@ -130,10 +130,10 @@ export const cliSpec = {
       description : 'Displays info about the servers or, if {underline name} supplied, a server. By default will display all information. If one or more info select options is provided, then it will only display that information.',
       arguments   : [
         { name : 'server-name', defaultOption : true, description : 'The name of the server to get into on.' },
-        { 
-          name : 'select-fields', 
+        {
+          name        : 'select-fields',
           description : 'List a field to display. Common options include: project-id, ip-address, machine-type, server-memory, and server-type. Underscores and hyphens are interchangeable. May be specified multiple times to select multiple fierds.',
-          multiple: true
+          multiple    : true
         },
         {
           name        : 'refresh',
@@ -142,10 +142,10 @@ export const cliSpec = {
         }
       ]
     },
-    { 
-      name : 'list', 
-      summary : 'Lists Cloudcraft managed Minecraft servers.',
-      description: "Lists Cloudcraft managed Minecraft servers. When the (primary) option '--quiet' is 'true', then it will output nothing if there are no servers. Otherwise, it prints a human readable message."
+    {
+      name        : 'list',
+      summary     : 'Lists Cloudcraft managed Minecraft servers.',
+      description : "Lists Cloudcraft managed Minecraft servers. When the (primary) option '--quiet' is 'true', then it will output nothing if there are no servers. Otherwise, it prints a human readable message."
     },
     {
       name        : 'ssh',

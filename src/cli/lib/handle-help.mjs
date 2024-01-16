@@ -51,7 +51,7 @@ const makeSections = ({ command, commandsSpec = cliSpec, prefix }) => {
 
   if (commandSpec === undefined) {
     process.stderr.write(`No such command '${command}'.\n\n`)
-    handleHelp({ argv: [] })
+    handleHelp({ argv : [] })
     process.exit(1)
   }
 
