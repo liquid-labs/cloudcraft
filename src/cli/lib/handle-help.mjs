@@ -78,7 +78,7 @@ const makeSections = ({ command, commandsSpec = cliSpec, prefix }) => {
     title += required === true ? ` [${name}]` : ` <${name}>`
   }
 
-  const sections = [{ header : title, content : cliSpec.commands.find(({ name }) => name === command).summary }]
+  const sections = [{ header : title, content : commandSpec.summary }]
   if (optionList.length > 0) {
     sections.push({ header : 'Options', optionList })
   }
