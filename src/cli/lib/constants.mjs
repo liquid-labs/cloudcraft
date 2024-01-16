@@ -3,7 +3,8 @@ export const VALID_SERVER_TYPES = ['bedrock', 'java']
 export const cliSpec = {
   mainCommand : 'cloudcraft',
   mainOptions : [
-    { name : 'command', defaultOption : true },
+    { name : 'command', defaultOption : true, description: 'The command to run or a sub-command group.' },
+    { name : 'quiet', alias: 'q', type: Boolean, descirption: 'Makes informational output less chatty.' },
     {
       name        : 'throw-error',
       type        : Boolean,

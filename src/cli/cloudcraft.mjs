@@ -19,7 +19,7 @@ const cloudcraft = async() => {
   const mainOptions = commandLineArgs(cliSpec.mainOptions, { stopAtFirstUnknown : true })
   const argv = mainOptions._unknown || []
 
-  const { command } = mainOptions
+  const { command, quiet } = mainOptions
   const throwError = mainOptions['throw-error']
 
   try {
@@ -39,7 +39,7 @@ const cloudcraft = async() => {
     case 'info':
       handleInfo({ argv }); break
     case 'list':
-      handleList({ argv }); break
+      handleList({ argv, quiet }); break
     case 'ssh':
       handleSSH({ argv }); break
     case 'start':
