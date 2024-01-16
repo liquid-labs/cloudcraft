@@ -1,3 +1,4 @@
+<!-- BEGIN_TF_DOCS -->
 # Cloudcraft Terraform Reference: vm-instance module
 
 ## Requirements
@@ -51,3 +52,4 @@ No modules.
 | <a name="output_machine_type"></a> [machine\_type](#output\_machine\_type) | Type of the base VM. |
 | <a name="output_server_memory"></a> [server\_memory](#output\_server\_memory) | Memory of the hosted VM / Minecraft server. |
 | <a name="output_server_type"></a> [server\_type](#output\_server\_type) | The type of Minecraft server hosted. |
+<!-- END_TF_DOCS -->

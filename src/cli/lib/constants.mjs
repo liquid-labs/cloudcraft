@@ -4,7 +4,7 @@ export const cliSpec = {
   mainCommand : 'cloudcraft',
   mainOptions : [
     { name : 'command', defaultOption : true, description : 'The command to run or a sub-command group.' },
-    { name : 'quiet', alias : 'q', type : Boolean, descirption : 'Makes informational output less chatty.' },
+    { name : 'quiet', alias : 'q', type : Boolean, description : 'Makes informational output less chatty.' },
     {
       name        : 'throw-error',
       type        : Boolean,
