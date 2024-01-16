@@ -15,8 +15,8 @@ const status = async({ name, noPing = false, refresh }) => {
 
   const projectData = await getProjectData()
   const instance = `cloudcraft-host-${name}`
-  const project = projectData.project_id.value
-  const zone = projectData.zone.value
+  const project = projectData.project_id
+  const zone = projectData.zone
 
   const instancesClient = new InstancesClient()
   const [instanceData] = await instancesClient.get({
@@ -30,7 +30,7 @@ const status = async({ name, noPing = false, refresh }) => {
 
   if (hostRunning === true && noPing !== true) {
     // const ip = (await getServerData(name)).ip_address
-    const serverData = projectData.servers.value[name]
+    const serverData = projectData.servers[name]
     const ip = serverData.ip_address
     const pingResult = await ping.promise.probe(ip, { min_reply : 6 })
     const { avg } = pingResult
