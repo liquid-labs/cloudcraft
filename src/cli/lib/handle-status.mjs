@@ -10,6 +10,10 @@ const handleStatus = async({ argv }) => {
   const noPing = statusOptions['no-ping']
   const { refresh } = statusOptions
 
+  if (name === undefined) {
+    throw new Error("Must specify positional argument 'server-name' when invoking 'status'.")
+  }
+
   await status({ name, noPing, refresh })
 }
 
