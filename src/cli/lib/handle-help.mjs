@@ -55,7 +55,7 @@ const makeSections = ({ command, commandsSpec = cliSpec, prefix }) => {
   }
 
   const details = commandSpec.description
-  const options = commandSpec.arguments
+  const options = commandSpec.arguments || []
 
   const optionList = options.map((v) => Object.assign({}, v))
   const defaultOptionIndex = optionList.findIndex(({ defaultOption }) => defaultOption)

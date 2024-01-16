@@ -95,7 +95,7 @@ export const cliSpec = {
           description   : 'The name of the server to create.',
           required      : true
         },
-        { name : 'server-type', default : 'bedrock', description : `May be one of: ${VALID_SERVER_TYPES.join(', ')}` }
+        { name : 'server-type', default : 'bedrock', description : `May be one of: ${VALID_SERVER_TYPES.join(', ')}.` }
       ]
     },
     {
@@ -139,7 +139,11 @@ export const cliSpec = {
         }
       ]
     },
-    { name : 'list', summary : 'Lists Cloudcraft managed Minecraft servers.' },
+    { 
+      name : 'list', 
+      summary : 'Lists Cloudcraft managed Minecraft servers.',
+      description: "Lists Cloudcraft managed Minecraft servers. When the (primary) option '--quiet' is 'true', then it will output nothing if there are no servers. Otherwise, it prints a human readable message."
+    },
     {
       name        : 'ssh',
       summary     : 'Displays the proper SSH command or executes specified command on remote server.',
