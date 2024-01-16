@@ -27,7 +27,7 @@ const destroyTerraform = async({ plan = false } = {}) => {
 
 const getProjectData = async() => {
   const jsonContent = (await tryExecAsync(`cd '${BUILD_DIR}' && terraform output -json`)).stdout
-  const data = JSON.parse(jsonContent)
+  const data = mapTerraformValues(JSON.parse(jsonContent))
 
   return data
 }
@@ -40,7 +40,7 @@ const getServerData = async(name) => {
 
 const getServersData = async() => {
   const data = await getProjectData()
-  const serversData = data.servers.value
+  const serversData = data.servers
 
   return serversData
 }
@@ -78,6 +78,14 @@ const stageTerraformVars = async({ billingAccountName, organizationName/*, proje
 
   await buildDirPromise
   await fs.writeFile(varsPath, varsContent)
+}
+
+const mapTerraformValues = (data, result = {}) => {
+  for (const key of Object.keys(data)) {
+    result[key] = data[key].value
+  }
+
+  return result
 }
 
 export {

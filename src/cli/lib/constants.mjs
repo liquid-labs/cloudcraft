@@ -130,8 +130,11 @@ export const cliSpec = {
       description : 'Displays info about the servers or, if {underline name} supplied, a server. By default will display all information. If one or more info select options is provided, then it will only display that information.',
       arguments   : [
         { name : 'server-name', defaultOption : true, description : 'The name of the server to get into on.' },
-        { name : 'ip-address', type : Boolean, description : 'Select the public IP address for display.' },
-        { name : 'machine-type', type : Boolean, description : 'Select the machine type for display.' },
+        { 
+          name : 'select-fields', 
+          description : 'List a field to display. Common options include: project-id, ip-address, machine-type, server-memory, and server-type. Underscores and hyphens are interchangeable. May be specified multiple times to select multiple fierds.',
+          multiple: true
+        },
         {
           name        : 'refresh',
           type        : Boolean,
