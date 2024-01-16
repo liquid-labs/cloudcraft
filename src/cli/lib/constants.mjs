@@ -86,8 +86,8 @@ export const cliSpec = {
     },
     {
       name        : 'create',
-      summary     : 'Creates (sets up) a cloud-based Minecraft server managed by Cloudcraft.',
-      description : 'Creates a server named {underline server-name}. This is, by default, a \'bedrock\' server.',
+      summary     : 'Creates a Minecraft named {underline server-name}..',
+      description : 'Creates a Cloudcraf managed minecraft server named {underline server-name}. By default this is a bedrock server.',
       arguments   : [
         {
           name          : 'server-name',
