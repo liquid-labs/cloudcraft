@@ -25,11 +25,11 @@ const cloudcraft = async() => {
   try {
     switch (command) {
     case 'backups':
-      handleBackups({ argv }); break
+      await handleBackups({ argv }); break
     case 'create':
-      handleCreate({ argv }); break
+      await handleCreate({ argv }); break
     case 'destroy':
-      handleDestroy({ argv }); break
+      await handleDestroy({ argv }); break
     case 'document':
       console.log(commandLineDocumentation(cliSpec, { sectionDepth : 2, title : 'Command reference' }))
       break
@@ -37,19 +37,19 @@ const cloudcraft = async() => {
     case undefined:
       handleHelp({ argv }); break
     case 'info':
-      handleInfo({ argv }); break
+      await handleInfo({ argv }); break
     case 'list':
-      handleList({ argv, quiet }); break
+      await handleList({ argv, quiet }); break
     case 'ssh':
-      handleSSH({ argv }); break
+      await handleSSH({ argv }); break
     case 'start':
-      handleStart({ argv }); break
+      await handleStart({ argv }); break
     case 'status':
-      handleStatus({ argv }); break
+      await handleStatus({ argv }); break
     case 'stop':
-      handleStop({ argv }); break
+      await handleStop({ argv }); break
     case 'terraform':
-      handleTerraform({ argv }); break
+      await handleTerraform({ argv }); break
     default:
       process.stderr.write('Uknown command: ' + command + '\n\n')
       handleHelp()
