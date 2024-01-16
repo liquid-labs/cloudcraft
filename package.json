@@ -12,6 +12,9 @@
     "preversion": "npm test && make lint",
     "qa": "make qa"
   },
+  "bin": {
+    "cloudcraft": "./dist/cloudcraft-exec.js"
+  },
   "files": [
     "./dist",
     "README.md",
