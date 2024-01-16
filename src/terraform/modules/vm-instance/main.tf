@@ -87,9 +87,9 @@ resource "google_compute_instance" "cloudcraft_host" {
     [Service]
     User=root
     WorkingDirectory=/var/lib/docker
-    ExecStart=/bin/bash -c 'docker stop mc || true; \
-    docker rm mc || true; \
-    docker run \
+    ExecStartPre=-docker stop mc
+    ExecStartPre=-docker rm mc
+    ExecStart=/bin/bash -c 'docker run \
       --detach \
       --interactive \
       --tty \
@@ -100,7 +100,11 @@ resource "google_compute_instance" "cloudcraft_host" {
       --name mc \
       -e MEMORY=${var.server_memory} \
       ${local.server_image}:latest >> /var/log/mc-docker-run.log 2>&1'
-    Restart=always
+    ExecStop=-docker stop mc
+    ExecStopPost=-docker rm mc
+    Type=oneshot
+    RemainAfterExit=yes
+    Restart=on-failure
     
     [Install]
     WantedBy=multi-user.target" > /etc/systemd/system/cloudcraft.service && systemctl enable cloudcraft && systemctl start cloudcraft
