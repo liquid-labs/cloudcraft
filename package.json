@@ -1,5 +1,5 @@
 {
-  "name": "@liquid-labs/cloudcraft",
+  "name": "cloudcraft",
   "version": "1.0.0-alpha.0",
   "description": "CLI to setup and manage your own cloud-based Minecraft server.",
   "main": "dist/cloudcraft.js",
@@ -31,8 +31,8 @@
   "author": "Zane Rockenbaugh <zane@liquid-labs.com>",
   "license": "Apache-2.0",
   "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/Liquid-Labs/cloudcraft.git"
+    "url": "git+ssh://git@github.com/Liquid-Labs/cloudcraft.git",
+    "type": "git"
   },
   "bugs": {
     "url": "https://github.com/Liquid-Labs/cloudcraft/issues"
@@ -61,5 +61,8 @@
     "@liquid-labs/sdlc-resource-babel-and-rollup": "^1.0.0-alpha.5",
     "@liquid-labs/sdlc-resource-eslint": "^1.0.0-alpha.2",
     "@liquid-labs/sdlc-resource-jest": "^1.0.0-alpha.5"
+  },
+  "_comply": {
+    "orgKey": "@liquid-labs"
   }
 }
